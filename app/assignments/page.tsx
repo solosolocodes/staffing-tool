@@ -9,16 +9,25 @@ import {
   XCircle,
   UserPlus,
   Briefcase,
-  Clock
+  Clock,
+  Edit,
+  Eye,
+  Trash2
 } from 'lucide-react';
 import { mockProjects, mockStaff, mockAssignments } from '@/lib/mock-data';
-import { formatPercentage, getStatusColor } from '@/lib/utils';
+import { formatPercentage, getStatusColor, formatCurrency } from '@/lib/utils';
 import { format } from 'date-fns';
+import { Assignment } from '@/lib/types';
+import AssignmentModal from '@/components/assignment-modal';
 
 export default function AssignmentsPage() {
   const [selectedProject, setSelectedProject] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [showAvailableOnly, setShowAvailableOnly] = useState(false);
+  const [assignments, setAssignments] = useState<Assignment[]>(mockAssignments);
+  const [selectedAssignment, setSelectedAssignment] = useState<Assignment | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalMode, setModalMode] = useState<'create' | 'edit' | 'view'>('view');
 
   const getStaffById = (staffId: string) => mockStaff.find(s => s.id === staffId);
   const getProjectById = (projectId: string) => mockProjects.find(p => p.id === projectId);
@@ -33,11 +42,58 @@ export default function AssignmentsPage() {
   });
 
   const getProjectAssignments = (projectId: string) => {
-    return mockAssignments.filter(a => a.projectId === projectId);
+    return assignments.filter(a => a.projectId === projectId);
   };
 
   const getStaffAssignments = (staffId: string) => {
-    return mockAssignments.filter(a => a.staffId === staffId);
+    return assignments.filter(a => a.staffId === staffId);
+  };
+
+  const handleCreateAssignment = () => {
+    setSelectedAssignment(null);
+    setModalMode('create');
+    setIsModalOpen(true);
+  };
+
+  const handleViewAssignment = (assignment: Assignment) => {
+    setSelectedAssignment(assignment);
+    setModalMode('view');
+    setIsModalOpen(true);
+  };
+
+  const handleEditAssignment = (assignment: Assignment) => {
+    setSelectedAssignment(assignment);
+    setModalMode('edit');
+    setIsModalOpen(true);
+  };
+
+  const handleSaveAssignment = (assignmentData: Assignment) => {
+    if (modalMode === 'create') {
+      setAssignments([...assignments, assignmentData]);
+    } else {
+      setAssignments(assignments.map(a => a.id === assignmentData.id ? assignmentData : a));
+    }
+    setIsModalOpen(false);
+    setSelectedAssignment(null);
+  };
+
+  const handleDeleteAssignment = (assignmentId: string) => {
+    setAssignments(assignments.filter(a => a.id !== assignmentId));
+    setIsModalOpen(false);
+    setSelectedAssignment(null);
+  };
+
+  const handleAssignToProject = () => {
+    if (selectedProject) {
+      setSelectedAssignment(null);
+      setModalMode('create');
+      setIsModalOpen(true);
+    }
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedAssignment(null);
   };
 
   return (
@@ -47,7 +103,10 @@ export default function AssignmentsPage() {
           <h1 className="text-3xl font-bold text-gray-900">Assignments</h1>
           <p className="mt-1 text-sm text-gray-500">Manage staff assignments to projects</p>
         </div>
-        <button className="flex items-center gap-2 rounded-lg bg-[#3C89A9] px-4 py-2 text-sm font-medium text-white hover:bg-[#2c6b87] shadow-sm">
+        <button 
+          onClick={() => handleCreateAssignment()}
+          className="flex items-center gap-2 rounded-lg bg-[#3C89A9] px-4 py-2 text-sm font-medium text-white hover:bg-[#2c6b87] shadow-sm"
+        >
           <UserPlus className="h-4 w-4" />
           New Assignment
         </button>
@@ -109,7 +168,7 @@ export default function AssignmentsPage() {
                             if (!staff) return null;
                             
                             return (
-                              <div key={assignment.id} className="flex items-center justify-between">
+                              <div key={assignment.id} className="flex items-center justify-between group">
                                 <div className="flex items-center gap-2">
                                   <div className="h-6 w-6 rounded-full bg-gray-200 flex items-center justify-center">
                                     <span className="text-xs font-medium text-gray-600">
@@ -117,8 +176,43 @@ export default function AssignmentsPage() {
                                     </span>
                                   </div>
                                   <span className="text-sm text-gray-700">{staff.name}</span>
+                                  <span className="text-xs text-gray-500">({assignment.role})</span>
                                 </div>
-                                <span className="text-sm text-gray-500">{assignment.allocation}%</span>
+                                <div className="flex items-center gap-2">
+                                  <span className="text-sm text-gray-500">{assignment.allocation}%</span>
+                                  <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <button
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleViewAssignment(assignment);
+                                      }}
+                                      className="text-gray-400 hover:text-[#3C89A9]"
+                                      title="View Assignment"
+                                    >
+                                      <Eye className="h-3 w-3" />
+                                    </button>
+                                    <button
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleEditAssignment(assignment);
+                                      }}
+                                      className="text-gray-400 hover:text-gray-600"
+                                      title="Edit Assignment"
+                                    >
+                                      <Edit className="h-3 w-3" />
+                                    </button>
+                                    <button
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleDeleteAssignment(assignment.id);
+                                      }}
+                                      className="text-gray-400 hover:text-red-600"
+                                      title="Delete Assignment"
+                                    >
+                                      <Trash2 className="h-3 w-3" />
+                                    </button>
+                                  </div>
+                                </div>
                               </div>
                             );
                           })}
@@ -182,6 +276,7 @@ export default function AssignmentsPage() {
                       </div>
                       {selectedProject && (
                         <button
+                          onClick={() => handleAssignToProject()}
                           disabled={!canAssign}
                           className={`rounded-lg px-3 py-1 text-sm font-medium transition-colors ${
                             canAssign
@@ -239,9 +334,27 @@ export default function AssignmentsPage() {
                             if (!project) return null;
                             
                             return (
-                              <div key={assignment.id} className="flex items-center justify-between">
+                              <div key={assignment.id} className="flex items-center justify-between group">
                                 <span className="text-sm text-gray-700 truncate">{project.name}</span>
-                                <span className="text-sm text-gray-500">{assignment.allocation}%</span>
+                                <div className="flex items-center gap-2">
+                                  <span className="text-sm text-gray-500">{assignment.allocation}%</span>
+                                  <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <button
+                                      onClick={() => handleViewAssignment(assignment)}
+                                      className="text-gray-400 hover:text-[#3C89A9]"
+                                      title="View Assignment"
+                                    >
+                                      <Eye className="h-3 w-3" />
+                                    </button>
+                                    <button
+                                      onClick={() => handleEditAssignment(assignment)}
+                                      className="text-gray-400 hover:text-gray-600"
+                                      title="Edit Assignment"
+                                    >
+                                      <Edit className="h-3 w-3" />
+                                    </button>
+                                  </div>
+                                </div>
                               </div>
                             );
                           })}
@@ -297,9 +410,18 @@ export default function AssignmentsPage() {
                       return (
                         <td key={project.id} className="px-4 py-3 text-center">
                           {assignment ? (
-                            <span className="inline-flex rounded-full bg-[#3C89A9]/10 px-2 py-1 text-xs font-medium text-[#3C89A9]">
-                              {assignment.allocation}%
-                            </span>
+                            <div className="group relative">
+                              <button
+                                onClick={() => handleViewAssignment(assignment)}
+                                className="inline-flex rounded-full bg-[#3C89A9]/10 px-2 py-1 text-xs font-medium text-[#3C89A9] hover:bg-[#3C89A9]/20 transition-colors"
+                              >
+                                {assignment.allocation}%
+                              </button>
+                              <div className="absolute top-full mt-1 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity z-10 whitespace-nowrap pointer-events-none">
+                                {assignment.role}<br/>
+                                {formatCurrency(assignment.totalCost)}/week
+                              </div>
+                            </div>
                           ) : (
                             <span className="text-gray-300">-</span>
                           )}
@@ -322,6 +444,17 @@ export default function AssignmentsPage() {
           </table>
         </div>
       </div>
+
+      {/* Assignment Modal */}
+      <AssignmentModal
+        assignment={selectedAssignment}
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        onSave={handleSaveAssignment}
+        onDelete={handleDeleteAssignment}
+        mode={modalMode}
+        preselectedProject={selectedProject || undefined}
+      />
     </div>
   );
 }
