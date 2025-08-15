@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import {
   Users,
   FolderKanban,
@@ -14,6 +14,7 @@ import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, Cart
 
 
 export default function DashboardPage() {
+  const [selectedYear, setSelectedYear] = useState(2024);
 
   const metrics = useMemo(() => {
     const totalProjects = mockProjects.length;
@@ -66,33 +67,61 @@ export default function DashboardPage() {
     { name: 'Infrastructure', value: 10, color: '#1e5468' },
   ];
 
-  // Generate comprehensive financial data from 2024 projects and future projections
+  // Generate year-based financial data with Jan-Dec layout and projections
   const financialData = useMemo(() => {
-    // Calculate actual monthly data based on completed projects
-    const monthlyData = [
-      // Q1 2024 - Healthcare + E-commerce starting
-      { period: 'Jan', received: 180000, spent: 140000, profit: 40000, isProjection: false },
-      { period: 'Feb', received: 220000, spent: 170000, profit: 50000, isProjection: false },
-      { period: 'Mar', received: 280000, spent: 210000, profit: 70000, isProjection: false },
-      
-      // Q2 2024 - All projects active, peak activity
-      { period: 'Apr', received: 350000, spent: 265000, profit: 85000, isProjection: false },
-      { period: 'May', received: 420000, spent: 315000, profit: 105000, isProjection: false },
-      { period: 'Jun', received: 450000, spent: 340000, profit: 110000, isProjection: false },
-      
-      // Q3 2024 - Some projects completing
-      { period: 'Jul', received: 380000, spent: 285000, profit: 95000, isProjection: false },
-      { period: 'Aug', received: 360000, spent: 270000, profit: 90000, isProjection: false },
-      { period: 'Sep', received: 320000, spent: 240000, profit: 80000, isProjection: false },
-      
-      // Q4 2024 - Project completions, new ones starting
-      { period: 'Oct', received: 290000, spent: 220000, profit: 70000, isProjection: false },
-      { period: 'Nov', received: 350000, spent: 260000, profit: 90000, isProjection: true }, // New VW project starts
-      { period: 'Dec', received: 420000, spent: 310000, profit: 110000, isProjection: true },
-    ];
+    const yearData: Record<number, Array<{period: string; received: number; spent: number; profit: number; isProjection: boolean}>> = {
+      2024: [
+        // Q1 2024 - Healthcare + E-commerce starting
+        { period: 'Jan', received: 180000, spent: 140000, profit: 40000, isProjection: false },
+        { period: 'Feb', received: 220000, spent: 170000, profit: 50000, isProjection: false },
+        { period: 'Mar', received: 280000, spent: 210000, profit: 70000, isProjection: false },
+        // Q2 2024 - All projects active, peak activity
+        { period: 'Apr', received: 350000, spent: 265000, profit: 85000, isProjection: false },
+        { period: 'May', received: 420000, spent: 315000, profit: 105000, isProjection: false },
+        { period: 'Jun', received: 450000, spent: 340000, profit: 110000, isProjection: false },
+        // Q3 2024 - Some projects completing
+        { period: 'Jul', received: 380000, spent: 285000, profit: 95000, isProjection: false },
+        { period: 'Aug', received: 360000, spent: 270000, profit: 90000, isProjection: false },
+        { period: 'Sep', received: 320000, spent: 240000, profit: 80000, isProjection: false },
+        // Q4 2024 - Project completions, new ones starting
+        { period: 'Oct', received: 290000, spent: 220000, profit: 70000, isProjection: false },
+        { period: 'Nov', received: 350000, spent: 260000, profit: 90000, isProjection: true },
+        { period: 'Dec', received: 420000, spent: 310000, profit: 110000, isProjection: true },
+      ],
+      2025: [
+        // 2025 - Major projects: VW, Commerzbank, BASF, Allianz
+        { period: 'Jan', received: 480000, spent: 360000, profit: 120000, isProjection: false },
+        { period: 'Feb', received: 520000, spent: 390000, profit: 130000, isProjection: false },
+        { period: 'Mar', received: 580000, spent: 435000, profit: 145000, isProjection: false },
+        { period: 'Apr', received: 620000, spent: 465000, profit: 155000, isProjection: false },
+        { period: 'May', received: 680000, spent: 510000, profit: 170000, isProjection: false },
+        { period: 'Jun', received: 720000, spent: 540000, profit: 180000, isProjection: false },
+        { period: 'Jul', received: 690000, spent: 520000, profit: 170000, isProjection: false },
+        { period: 'Aug', received: 650000, spent: 490000, profit: 160000, isProjection: false },
+        { period: 'Sep', received: 620000, spent: 465000, profit: 155000, isProjection: false },
+        { period: 'Oct', received: 580000, spent: 435000, profit: 145000, isProjection: true },
+        { period: 'Nov', received: 550000, spent: 415000, profit: 135000, isProjection: true },
+        { period: 'Dec', received: 520000, spent: 390000, profit: 130000, isProjection: true },
+      ],
+      2026: [
+        // 2026 - Allianz continues, Metro starts, some projects ending
+        { period: 'Jan', received: 480000, spent: 360000, profit: 120000, isProjection: false },
+        { period: 'Feb', received: 450000, spent: 340000, profit: 110000, isProjection: false },
+        { period: 'Mar', received: 420000, spent: 315000, profit: 105000, isProjection: true },
+        { period: 'Apr', received: 390000, spent: 295000, profit: 95000, isProjection: true },
+        { period: 'May', received: 360000, spent: 270000, profit: 90000, isProjection: true },
+        { period: 'Jun', received: 330000, spent: 250000, profit: 80000, isProjection: true },
+        { period: 'Jul', received: 300000, spent: 225000, profit: 75000, isProjection: true },
+        { period: 'Aug', received: 280000, spent: 210000, profit: 70000, isProjection: true },
+        { period: 'Sep', received: 260000, spent: 195000, profit: 65000, isProjection: true },
+        { period: 'Oct', received: 240000, spent: 180000, profit: 60000, isProjection: true },
+        { period: 'Nov', received: 220000, spent: 165000, profit: 55000, isProjection: true },
+        { period: 'Dec', received: 200000, spent: 150000, profit: 50000, isProjection: true },
+      ]
+    };
 
-    return monthlyData;
-  }, []);
+    return yearData[selectedYear] || [];
+  }, [selectedYear]);
 
   // Split data into historical and projection for different line styles
   const historicalData = financialData.filter(d => !d.isProjection);
@@ -143,9 +172,20 @@ export default function DashboardPage() {
       <div className="grid gap-6 lg:grid-cols-2">
         <div className="rounded-xl bg-white border border-gray-200 p-6">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-gray-900">Financial Performance (2024)</h2>
-            <div className="text-sm text-gray-500">
-              Jan-Oct: Actual • Nov-Dec: Projections
+            <h2 className="text-lg font-semibold text-gray-900">Financial Performance</h2>
+            <div className="flex items-center gap-4">
+              <select
+                value={selectedYear}
+                onChange={(e) => setSelectedYear(parseInt(e.target.value))}
+                className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-[#3C89A9] focus:outline-none focus:ring-1 focus:ring-[#3C89A9]"
+              >
+                <option value={2024}>2024</option>
+                <option value={2025}>2025</option>
+                <option value={2026}>2026</option>
+              </select>
+              <div className="text-sm text-gray-500">
+                Solid: Actual • Dotted: Projections
+              </div>
             </div>
           </div>
           <ResponsiveContainer width="100%" height={300}>
