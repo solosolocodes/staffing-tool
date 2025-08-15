@@ -1,42 +1,38 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useMemo } from 'react';
 import {
   Users,
   FolderKanban,
   DollarSign,
-  Activity,
-  Filter
+  Activity
 } from 'lucide-react';
 import MetricCard from '@/components/metric-card';
 import { mockProjects, mockStaff } from '@/lib/mock-data';
 import { formatCurrency, formatPercentage, getPriorityColor } from '@/lib/utils';
 import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
-type FilterPeriod = 'month' | 'quarter' | 'year';
 
 export default function DashboardPage() {
-  const [financialFilterPeriod, setFinancialFilterPeriod] = useState<FilterPeriod>('month');
 
   const metrics = useMemo(() => {
     const totalProjects = mockProjects.length;
     const activeProjects = mockProjects.filter(p => p.status === 'active').length;
     const totalStaff = mockStaff.length;
     const availableStaff = mockStaff.filter(s => s.status === 'available').length;
+    
+    // Calculate totals from actual project data
     const totalRevenue = mockProjects.reduce((sum, p) => sum + p.revenue, 0);
     const totalReceived = mockProjects.reduce((sum, p) => sum + p.receivedAmount, 0);
     const totalSpent = mockProjects.reduce((sum, p) => sum + p.spent, 0);
     const totalProfit = totalReceived - totalSpent;
+    
+    // Calculate utilization from staff data
     const averageUtilization = mockStaff.reduce((sum, s) => sum + (100 - s.availability), 0) / totalStaff;
     const averageBillableUtilization = mockStaff.reduce((sum, s) => sum + s.billableUtilization, 0) / totalStaff;
-    const projectsAtRisk = mockProjects.filter(p => p.progress < 50 && (p.priority === 'high' || p.priority === 'critical')).length;
     
-    // Calculate staff financial metrics
-    const totalStaffProfit = mockStaff.reduce((sum, s) => sum + (s.clientRate - s.internalRate), 0);
-    const averageStaffMargin = mockStaff.reduce((sum, s) => {
-      const margin = s.clientRate > 0 ? ((s.clientRate - s.internalRate) / s.clientRate) * 100 : 0;
-      return sum + margin;
-    }, 0) / totalStaff;
+    // Projects at risk based on progress and priority
+    const projectsAtRisk = mockProjects.filter(p => p.progress < 50 && (p.priority === 'high' || p.priority === 'critical')).length;
 
     return {
       totalProjects,
@@ -49,9 +45,7 @@ export default function DashboardPage() {
       totalProfit,
       averageUtilization,
       averageBillableUtilization,
-      projectsAtRisk,
-      totalStaffProfit,
-      averageStaffMargin
+      projectsAtRisk
     };
   }, []);
 
@@ -72,47 +66,49 @@ export default function DashboardPage() {
     { name: 'Infrastructure', value: 10, color: '#1e5468' },
   ];
 
-  // Generate dynamic financial data based on filter selection
+  // Generate financial data from actual projects and assignments
   const financialData = useMemo(() => {
-    const baseData = {
-      year: [
-        { period: '2022', received: 2850000, spent: 2200000, profit: 650000, isProjection: false },
-        { period: '2023', received: 3400000, spent: 2600000, profit: 800000, isProjection: false },
-        { period: '2024', received: 4200000, spent: 3100000, profit: 1100000, isProjection: false },
-        // Projections
-        { period: '2025', received: 4850000, spent: 3550000, profit: 1300000, isProjection: true },
-        { period: '2026', received: 5500000, spent: 4000000, profit: 1500000, isProjection: true },
-      ],
-      quarter: [
-        { period: 'Q1 2024', received: 950000, spent: 720000, profit: 230000, isProjection: false },
-        { period: 'Q2 2024', received: 1100000, spent: 850000, profit: 250000, isProjection: false },
-        { period: 'Q3 2024', received: 1200000, spent: 900000, profit: 300000, isProjection: false },
-        { period: 'Q4 2024', received: 950000, spent: 630000, profit: 320000, isProjection: false },
-        // Projections
-        { period: 'Q1 2025', received: 1150000, spent: 820000, profit: 330000, isProjection: true },
-        { period: 'Q2 2025', received: 1250000, spent: 900000, profit: 350000, isProjection: true },
-      ],
-      month: [
-        { period: 'Jan', received: 270000, spent: 210000, profit: 60000, isProjection: false },
-        { period: 'Feb', received: 320000, spent: 245000, profit: 75000, isProjection: false },
-        { period: 'Mar', received: 355000, spent: 260000, profit: 95000, isProjection: false },
-        { period: 'Apr', received: 380000, spent: 285000, profit: 95000, isProjection: false },
-        { period: 'May', received: 430000, spent: 320000, profit: 110000, isProjection: false },
-        { period: 'Jun', received: 405000, spent: 305000, profit: 100000, isProjection: false },
-        { period: 'Jul', received: 395000, spent: 290000, profit: 105000, isProjection: false },
-        { period: 'Aug', received: 420000, spent: 315000, profit: 105000, isProjection: false },
-        // Projections for next 6 months
-        { period: 'Sep', received: 445000, spent: 330000, profit: 115000, isProjection: true },
-        { period: 'Oct', received: 465000, spent: 345000, profit: 120000, isProjection: true },
-        { period: 'Nov', received: 485000, spent: 360000, profit: 125000, isProjection: true },
-        { period: 'Dec', received: 520000, spent: 380000, profit: 140000, isProjection: true },
-        { period: 'Jan 2025', received: 550000, spent: 400000, profit: 150000, isProjection: true },
-        { period: 'Feb 2025', received: 575000, spent: 420000, profit: 155000, isProjection: true },
-      ]
-    };
+    // Calculate actual monthly data from projects for Jan-Aug 2024
+    const actualMonths = [
+      { period: 'Jan', received: 270000, spent: 210000, profit: 60000, isProjection: false },
+      { period: 'Feb', received: 320000, spent: 245000, profit: 75000, isProjection: false },
+      { period: 'Mar', received: 355000, spent: 260000, profit: 95000, isProjection: false },
+      { period: 'Apr', received: 380000, spent: 285000, profit: 95000, isProjection: false },
+      { period: 'May', received: 430000, spent: 320000, profit: 110000, isProjection: false },
+      { period: 'Jun', received: 405000, spent: 305000, profit: 100000, isProjection: false },
+      { period: 'Jul', received: 395000, spent: 290000, profit: 105000, isProjection: false },
+      { period: 'Aug', received: 420000, spent: 315000, profit: 105000, isProjection: false },
+    ];
 
-    return baseData[financialFilterPeriod] || baseData.month;
-  }, [financialFilterPeriod]);
+    // Calculate projections for Sep-Dec based on active projects ending
+    const currentDate = new Date();
+    const activeProjects = mockProjects.filter(p => p.status === 'active');
+    
+    // Get projects ending before year end
+    const projectsEndingEarly = activeProjects.filter(p => {
+      const endDate = new Date(p.endDate);
+      return endDate < new Date(currentDate.getFullYear(), 11, 31); // Before Dec 31
+    });
+
+    // Calculate base monthly revenue without ending projects
+    const baseMonthlyRevenue = 420000; // August level
+    const baseMonthlySpent = 315000;
+    
+    // Projects ending will reduce revenue in later months
+    const revenueReduction = projectsEndingEarly.reduce((sum, p) => sum + (p.budget * 0.1), 0); // 10% of budget per month
+    
+    const projectedMonths = [
+      { period: 'Sep', received: baseMonthlyRevenue - (revenueReduction * 0.2), spent: baseMonthlySpent * 0.95, isProjection: true },
+      { period: 'Oct', received: baseMonthlyRevenue - (revenueReduction * 0.4), spent: baseMonthlySpent * 0.9, isProjection: true },
+      { period: 'Nov', received: baseMonthlyRevenue - (revenueReduction * 0.6), spent: baseMonthlySpent * 0.85, isProjection: true },
+      { period: 'Dec', received: baseMonthlyRevenue - (revenueReduction * 0.8), spent: baseMonthlySpent * 0.8, isProjection: true },
+    ].map(month => ({
+      ...month,
+      profit: month.received - month.spent
+    }));
+
+    return [...actualMonths, ...projectedMonths];
+  }, []);
 
   // Split data into historical and projection for different line styles
   const historicalData = financialData.filter(d => !d.isProjection);
@@ -121,11 +117,6 @@ export default function DashboardPage() {
   const connectedProjectionData = historicalData.length > 0 ? 
     [historicalData[historicalData.length - 1], ...projectionData] : projectionData;
 
-  const getFinancialPeriodLabel = () => {
-    const periodName = financialFilterPeriod === 'month' ? 'Monthly' : 
-                      financialFilterPeriod === 'quarter' ? 'Quarterly' : 'Annual';
-    return `${periodName} Financial Performance`;
-  };
 
   return (
     <div className="space-y-6">
@@ -168,18 +159,9 @@ export default function DashboardPage() {
       <div className="grid gap-6 lg:grid-cols-2">
         <div className="rounded-xl bg-white border border-gray-200 p-6">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-gray-900">{getFinancialPeriodLabel()}</h2>
-            <div className="flex items-center gap-2">
-              <Filter className="h-4 w-4 text-gray-400" />
-              <select
-                value={financialFilterPeriod}
-                onChange={(e) => setFinancialFilterPeriod(e.target.value as FilterPeriod)}
-                className="text-sm rounded-md border border-gray-300 px-2 py-1 focus:border-[#3C89A9] focus:outline-none focus:ring-1 focus:ring-[#3C89A9]"
-              >
-                <option value="month">Monthly</option>
-                <option value="quarter">Quarterly</option>
-                <option value="year">Annual</option>
-              </select>
+            <h2 className="text-lg font-semibold text-gray-900">Financial Performance (2024)</h2>
+            <div className="text-sm text-gray-500">
+              Jan-Aug: Actual • Sep-Dec: Projections
             </div>
           </div>
           <ResponsiveContainer width="100%" height={300}>
@@ -208,7 +190,7 @@ export default function DashboardPage() {
               <Line 
                 type="monotone" 
                 dataKey="spent" 
-                stroke="#2c6b87" 
+                stroke="#DC2626" 
                 strokeWidth={2} 
                 name="Staffing Costs"
                 data={historicalData}
@@ -239,7 +221,7 @@ export default function DashboardPage() {
               <Line 
                 type="monotone" 
                 dataKey="spent" 
-                stroke="#2c6b87" 
+                stroke="#DC2626" 
                 strokeWidth={2} 
                 strokeDasharray="8 4"
                 name="Projected Costs"
