@@ -68,12 +68,12 @@ export default function DashboardPage() {
   ];
 
   const revenueData = [
-    { month: 'Jan', received: 320000, spent: 250000, profit: 70000 },
-    { month: 'Feb', received: 380000, spent: 290000, profit: 90000 },
-    { month: 'Mar', received: 420000, spent: 310000, profit: 110000 },
-    { month: 'Apr', received: 450000, spent: 340000, profit: 110000 },
-    { month: 'May', received: 510000, spent: 380000, profit: 130000 },
-    { month: 'Jun', received: 480000, spent: 360000, profit: 120000 },
+    { month: 'Jan', received: 270000, spent: 210000, profit: 60000 },
+    { month: 'Feb', received: 320000, spent: 245000, profit: 75000 },
+    { month: 'Mar', received: 355000, spent: 260000, profit: 95000 },
+    { month: 'Apr', received: 380000, spent: 285000, profit: 95000 },
+    { month: 'May', received: 430000, spent: 320000, profit: 110000 },
+    { month: 'Jun', received: 405000, spent: 305000, profit: 100000 },
   ];
 
   return (
