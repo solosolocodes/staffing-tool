@@ -11,19 +11,26 @@ import {
   TrendingUp,
   Edit,
   Trash2,
-  Eye
+  Eye,
+  Crown,
+  Receipt
 } from 'lucide-react';
-import { mockProjects } from '@/lib/mock-data';
+import { mockProjects, mockStaff, mockAssignments } from '@/lib/mock-data';
 import { formatCurrency, formatPercentage, getStatusColor, getPriorityColor } from '@/lib/utils';
 import { format } from 'date-fns';
+import { Project, Assignment } from '@/lib/types';
+import ProjectEditModal from '@/components/project-edit-modal';
 
 export default function ProjectsPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [priorityFilter, setPriorityFilter] = useState('all');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [projects, setProjects] = useState<Project[]>(mockProjects);
+  const [editingProject, setEditingProject] = useState<Project | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const filteredProjects = mockProjects.filter(project => {
+  const filteredProjects = projects.filter(project => {
     const matchesSearch = project.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          project.client.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = statusFilter === 'all' || project.status === statusFilter;
@@ -31,6 +38,25 @@ export default function ProjectsPage() {
     
     return matchesSearch && matchesStatus && matchesPriority;
   });
+
+  const handleEditProject = (project: Project) => {
+    setEditingProject(project);
+    setIsModalOpen(true);
+  };
+
+  const handleSaveProject = (updatedProject: Project, assignments: Assignment[]) => {
+    setProjects(projects.map(p => p.id === updatedProject.id ? updatedProject : p));
+    // In a real app, you would also save the assignments
+  };
+
+  const getTeamLead = (project: Project) => {
+    if (!project.teamLead) return null;
+    return mockStaff.find(s => s.id === project.teamLead);
+  };
+
+  const getProjectAssignments = (projectId: string) => {
+    return mockAssignments.filter(a => a.projectId === projectId);
+  };
 
   return (
     <div className="space-y-6">
@@ -146,6 +172,40 @@ export default function ProjectsPage() {
                 </div>
               </div>
 
+              <div className="space-y-3 mb-4">
+                {/* Team Lead */}
+                {getTeamLead(project) && (
+                  <div className="flex items-center gap-2">
+                    <Crown className="h-4 w-4 text-yellow-500" />
+                    <span className="text-sm text-gray-700">Lead: {getTeamLead(project)?.name}</span>
+                  </div>
+                )}
+                
+                {/* Financial Summary */}
+                <div className="bg-gray-50 rounded-lg p-3">
+                  <div className="grid grid-cols-2 gap-2 text-sm">
+                    <div>
+                      <span className="text-gray-500">Budget:</span>
+                      <div className="font-medium text-gray-900">{formatCurrency(project.budget)}</div>
+                    </div>
+                    <div>
+                      <span className="text-gray-500">Received:</span>
+                      <div className="font-medium text-green-600">{formatCurrency(project.receivedAmount)}</div>
+                    </div>
+                    <div>
+                      <span className="text-gray-500">Spent:</span>
+                      <div className="font-medium text-red-600">{formatCurrency(project.spent)}</div>
+                    </div>
+                    <div>
+                      <span className="text-gray-500">Profit:</span>
+                      <div className={`font-medium ${(project.receivedAmount - project.spent) >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                        {formatCurrency(project.receivedAmount - project.spent)}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
               <div className="grid grid-cols-2 gap-3 text-sm">
                 <div className="flex items-center gap-2">
                   <Users className="h-4 w-4 text-gray-400" />
@@ -153,15 +213,9 @@ export default function ProjectsPage() {
                 </div>
                 <div className="flex items-center gap-2">
                   <Calendar className="h-4 w-4 text-gray-400" />
-                  <span className="text-gray-600">{format(new Date(project.endDate), 'MMM dd')}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <DollarSign className="h-4 w-4 text-gray-400" />
-                  <span className="text-gray-600">{formatCurrency(project.budget)}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <TrendingUp className="h-4 w-4 text-gray-400" />
-                  <span className="text-gray-600">{formatPercentage((project.spent / project.budget) * 100)} spent</span>
+                  <span className="text-gray-600">
+                    {format(new Date(project.startDate), 'MMM dd')} - {format(new Date(project.endDate), 'MMM dd')}
+                  </span>
                 </div>
               </div>
 
@@ -170,7 +224,10 @@ export default function ProjectsPage() {
                   <Eye className="h-4 w-4" />
                   View
                 </button>
-                <button className="flex-1 flex items-center justify-center gap-1 rounded-lg border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50">
+                <button 
+                  onClick={() => handleEditProject(project)}
+                  className="flex-1 flex items-center justify-center gap-1 rounded-lg border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                >
                   <Edit className="h-4 w-4" />
                   Edit
                 </button>
@@ -263,7 +320,10 @@ export default function ProjectsPage() {
                       <button className="text-gray-400 hover:text-gray-600">
                         <Eye className="h-4 w-4" />
                       </button>
-                      <button className="text-gray-400 hover:text-gray-600">
+                      <button 
+                        onClick={() => handleEditProject(project)}
+                        className="text-gray-400 hover:text-gray-600"
+                      >
                         <Edit className="h-4 w-4" />
                       </button>
                       <button className="text-gray-400 hover:text-red-600">
@@ -277,6 +337,16 @@ export default function ProjectsPage() {
           </table>
         </div>
       )}
+
+      <ProjectEditModal
+        project={editingProject}
+        isOpen={isModalOpen}
+        onClose={() => {
+          setIsModalOpen(false);
+          setEditingProject(null);
+        }}
+        onSave={handleSaveProject}
+      />
     </div>
   );
 }

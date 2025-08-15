@@ -12,11 +12,13 @@ export const mockProjects: Project[] = [
     budget: 450000,
     spent: 285000,
     revenue: 450000,
+    receivedAmount: 320000,
     teamSize: 8,
     techStack: ['React', 'Node.js', 'PostgreSQL', 'AWS'],
     priority: 'high',
     progress: 65,
     projectManager: 'Sarah Johnson',
+    teamLead: 'staff-001',
     staffAssigned: ['staff-001', 'staff-002', 'staff-003', 'staff-004']
   },
   {
@@ -30,11 +32,13 @@ export const mockProjects: Project[] = [
     budget: 680000,
     spent: 340000,
     revenue: 680000,
+    receivedAmount: 408000,
     teamSize: 10,
     techStack: ['React Native', 'TypeScript', 'Firebase', 'Node.js'],
     priority: 'critical',
     progress: 45,
     projectManager: 'Michael Chen',
+    teamLead: 'staff-005',
     staffAssigned: ['staff-005', 'staff-006', 'staff-007', 'staff-008', 'staff-009']
   },
   {
@@ -48,11 +52,13 @@ export const mockProjects: Project[] = [
     budget: 520000,
     spent: 45000,
     revenue: 520000,
+    receivedAmount: 104000,
     teamSize: 6,
     techStack: ['Python', 'TensorFlow', 'React', 'MongoDB'],
     priority: 'medium',
     progress: 15,
     projectManager: 'Emily Davis',
+    teamLead: 'staff-010',
     staffAssigned: ['staff-010', 'staff-011']
   },
   {
@@ -66,11 +72,13 @@ export const mockProjects: Project[] = [
     budget: 890000,
     spent: 712000,
     revenue: 890000,
+    receivedAmount: 623000,
     teamSize: 12,
     techStack: ['Angular', '.NET Core', 'SQL Server', 'Azure'],
     priority: 'high',
     progress: 80,
     projectManager: 'Robert Martinez',
+    teamLead: 'staff-012',
     staffAssigned: ['staff-012', 'staff-013', 'staff-014', 'staff-015']
   },
   {
@@ -84,11 +92,13 @@ export const mockProjects: Project[] = [
     budget: 320000,
     spent: 120000,
     revenue: 320000,
+    receivedAmount: 96000,
     teamSize: 5,
     techStack: ['Vue.js', 'Python', 'InfluxDB', 'Docker'],
     priority: 'low',
     progress: 35,
     projectManager: 'Lisa Anderson',
+    teamLead: 'staff-016',
     staffAssigned: ['staff-016', 'staff-017']
   }
 ];
@@ -335,7 +345,10 @@ export const mockAssignments: Assignment[] = [
     allocation: 100,
     startDate: '2024-01-15',
     endDate: '2024-06-30',
-    billableHours: 168
+    billableHours: 168,
+    hourlyRate: 150,
+    totalCost: 25200,
+    isTeamLead: true
   },
   {
     id: 'assign-002',
@@ -345,7 +358,10 @@ export const mockAssignments: Assignment[] = [
     allocation: 60,
     startDate: '2024-01-15',
     endDate: '2024-06-30',
-    billableHours: 100
+    billableHours: 100,
+    hourlyRate: 120,
+    totalCost: 12000,
+    isTeamLead: false
   },
   {
     id: 'assign-003',
@@ -355,7 +371,10 @@ export const mockAssignments: Assignment[] = [
     allocation: 100,
     startDate: '2024-02-01',
     endDate: '2024-08-15',
-    billableHours: 168
+    billableHours: 168,
+    hourlyRate: 145,
+    totalCost: 24360,
+    isTeamLead: true
   },
   {
     id: 'assign-004',
@@ -365,6 +384,9 @@ export const mockAssignments: Assignment[] = [
     allocation: 40,
     startDate: '2024-02-01',
     endDate: '2024-08-15',
-    billableHours: 20
+    billableHours: 20,
+    hourlyRate: 120,
+    totalCost: 2400,
+    isTeamLead: false
   }
 ];

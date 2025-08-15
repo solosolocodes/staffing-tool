@@ -19,9 +19,11 @@ export default function DashboardPage() {
     const totalStaff = mockStaff.length;
     const availableStaff = mockStaff.filter(s => s.status === 'available').length;
     const totalRevenue = mockProjects.reduce((sum, p) => sum + p.revenue, 0);
+    const totalReceived = mockProjects.reduce((sum, p) => sum + p.receivedAmount, 0);
     const totalSpent = mockProjects.reduce((sum, p) => sum + p.spent, 0);
+    const totalProfit = totalReceived - totalSpent;
     const averageUtilization = mockStaff.reduce((sum, s) => sum + (100 - s.availability), 0) / totalStaff;
-    const projectsAtRisk = mockProjects.filter(p => p.progress < 50 && p.priority === 'high').length;
+    const projectsAtRisk = mockProjects.filter(p => p.progress < 50 && (p.priority === 'high' || p.priority === 'critical')).length;
 
     return {
       totalProjects,
@@ -29,7 +31,9 @@ export default function DashboardPage() {
       totalStaff,
       availableStaff,
       totalRevenue,
+      totalReceived,
       totalSpent,
+      totalProfit,
       averageUtilization,
       projectsAtRisk
     };
@@ -53,12 +57,12 @@ export default function DashboardPage() {
   ];
 
   const revenueData = [
-    { month: 'Jan', revenue: 420000, cost: 320000 },
-    { month: 'Feb', revenue: 480000, cost: 360000 },
-    { month: 'Mar', revenue: 520000, cost: 380000 },
-    { month: 'Apr', revenue: 550000, cost: 400000 },
-    { month: 'May', revenue: 610000, cost: 440000 },
-    { month: 'Jun', revenue: 580000, cost: 420000 },
+    { month: 'Jan', received: 320000, spent: 250000, profit: 70000 },
+    { month: 'Feb', received: 380000, spent: 290000, profit: 90000 },
+    { month: 'Mar', received: 420000, spent: 310000, profit: 110000 },
+    { month: 'Apr', received: 450000, spent: 340000, profit: 110000 },
+    { month: 'May', received: 510000, spent: 380000, profit: 130000 },
+    { month: 'Jun', received: 480000, spent: 360000, profit: 120000 },
   ];
 
   return (
@@ -91,17 +95,17 @@ export default function DashboardPage() {
           description="Average across all staff"
         />
         <MetricCard
-          title="Monthly Revenue"
-          value={formatCurrency(metrics.totalRevenue / 6)}
+          title="Total Profit"
+          value={formatCurrency(metrics.totalProfit)}
           icon={DollarSign}
-          trend={{ value: 15, isPositive: true }}
-          description="Average per month"
+          trend={{ value: 18, isPositive: metrics.totalProfit > 0 }}
+          description={`${formatCurrency(metrics.totalReceived)} received - ${formatCurrency(metrics.totalSpent)} spent`}
         />
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
         <div className="rounded-xl bg-white border border-gray-200 p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Revenue vs Cost</h2>
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">Financial Performance</h2>
           <ResponsiveContainer width="100%" height={300}>
             <LineChart data={revenueData}>
               <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
@@ -109,8 +113,9 @@ export default function DashboardPage() {
               <YAxis stroke="#6b7280" tickFormatter={(value) => `$${value/1000}k`} />
               <Tooltip formatter={(value: number) => formatCurrency(value)} />
               <Legend />
-              <Line type="monotone" dataKey="revenue" stroke="#3C89A9" strokeWidth={2} name="Revenue" />
-              <Line type="monotone" dataKey="cost" stroke="#2c6b87" strokeWidth={2} name="Cost" />
+              <Line type="monotone" dataKey="received" stroke="#3C89A9" strokeWidth={2} name="Received" />
+              <Line type="monotone" dataKey="spent" stroke="#2c6b87" strokeWidth={2} name="Spent" />
+              <Line type="monotone" dataKey="profit" stroke="#10B981" strokeWidth={2} name="Profit" />
             </LineChart>
           </ResponsiveContainer>
         </div>
@@ -160,7 +165,17 @@ export default function DashboardPage() {
                         {project.priority.toUpperCase()}
                       </span>
                     </div>
-                    <p className="text-sm text-gray-500 mt-1">{project.client}</p>
+                    <div className="flex items-center gap-2 mt-1">
+                      <p className="text-sm text-gray-500">{project.client}</p>
+                      {project.teamLead && (
+                        <div className="flex items-center gap-1">
+                          <span className="text-xs text-gray-400">•</span>
+                          <span className="text-xs text-gray-500">
+                            Lead: {mockStaff.find(s => s.id === project.teamLead)?.name}
+                          </span>
+                        </div>
+                      )}
+                    </div>
                   </div>
                   <div className="flex items-center gap-4">
                     <div className="text-right">
@@ -170,7 +185,7 @@ export default function DashboardPage() {
                     <div className="w-24">
                       <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
                         <div
-                          className="h-full bg-blue-500 transition-all"
+                          className="h-full bg-[#3C89A9] transition-all"
                           style={{ width: `${project.progress}%` }}
                         />
                       </div>

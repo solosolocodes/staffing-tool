@@ -13,11 +13,13 @@ export interface Project {
   budget: number;
   spent: number;
   revenue: number;
+  receivedAmount: number;
   teamSize: number;
   techStack: string[];
   priority: 'low' | 'medium' | 'high' | 'critical';
   progress: number;
   projectManager: string;
+  teamLead?: string;
   staffAssigned: string[];
 }
 
@@ -57,6 +59,9 @@ export interface Assignment {
   startDate: string;
   endDate: string;
   billableHours: number;
+  hourlyRate: number;
+  totalCost: number;
+  isTeamLead?: boolean;
 }
 
 export interface DashboardMetrics {
