@@ -4,7 +4,6 @@ import { useState } from 'react';
 import {
   Search,
   MapPin,
-  DollarSign,
   MoreVertical,
   Mail,
   Briefcase,
@@ -14,12 +13,10 @@ import {
   Eye,
   Phone,
   TrendingUp,
-  Activity,
-  Clock,
-  Users
+  Activity
 } from 'lucide-react';
 import { mockStaff, mockProjects } from '@/lib/mock-data';
-import { getStatusColor, formatCurrency, formatPercentage } from '@/lib/utils';
+import { getStatusColor, formatCurrency } from '@/lib/utils';
 import { Staff } from '@/lib/types';
 import StaffCrudModal from '@/components/staff-crud-modal';
 

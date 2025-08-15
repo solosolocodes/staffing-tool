@@ -5,20 +5,17 @@ import {
   Plus,
   Search,
   Calendar,
-  DollarSign,
   Users,
   MoreVertical,
-  TrendingUp,
   Edit,
   Trash2,
   Eye,
-  Crown,
-  Receipt
+  Crown
 } from 'lucide-react';
-import { mockProjects, mockStaff, mockAssignments } from '@/lib/mock-data';
+import { mockProjects, mockStaff } from '@/lib/mock-data';
 import { formatCurrency, formatPercentage, getStatusColor, getPriorityColor } from '@/lib/utils';
 import { format } from 'date-fns';
-import { Project, Assignment } from '@/lib/types';
+import { Project } from '@/lib/types';
 import ProjectEditModal from '@/components/project-edit-modal';
 
 export default function ProjectsPage() {
@@ -44,9 +41,8 @@ export default function ProjectsPage() {
     setIsModalOpen(true);
   };
 
-  const handleSaveProject = (updatedProject: Project, assignments: Assignment[]) => {
+  const handleSaveProject = (updatedProject: Project) => {
     setProjects(projects.map(p => p.id === updatedProject.id ? updatedProject : p));
-    // In a real app, you would also save the assignments
   };
 
   const getTeamLead = (project: Project) => {
@@ -54,9 +50,6 @@ export default function ProjectsPage() {
     return mockStaff.find(s => s.id === project.teamLead);
   };
 
-  const getProjectAssignments = (projectId: string) => {
-    return mockAssignments.filter(a => a.projectId === projectId);
-  };
 
   return (
     <div className="space-y-6">

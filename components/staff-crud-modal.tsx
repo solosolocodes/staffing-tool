@@ -19,7 +19,7 @@ import {
   Code,
   Briefcase
 } from 'lucide-react';
-import { Staff, Skill, SkillLevel } from '@/lib/types';
+import { Staff, SkillLevel } from '@/lib/types';
 
 interface StaffCrudModalProps {
   staff: Staff | null;

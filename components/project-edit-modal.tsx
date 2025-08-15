@@ -5,11 +5,7 @@ import {
   X,
   Plus,
   Trash2,
-  User,
   Crown,
-  Calendar,
-  DollarSign,
-  Users,
   Save
 } from 'lucide-react';
 import { Project, Staff, Assignment } from '@/lib/types';
@@ -64,8 +60,8 @@ export default function ProjectEditModal({
       startDate: formData.startDate,
       endDate: formData.endDate,
       billableHours: 84,
-      hourlyRate: staff.rate,
-      totalCost: 84 * staff.rate,
+      hourlyRate: staff.clientRate,
+      totalCost: 84 * staff.clientRate,
       isTeamLead: false
     };
 
