@@ -66,48 +66,32 @@ export default function DashboardPage() {
     { name: 'Infrastructure', value: 10, color: '#1e5468' },
   ];
 
-  // Generate financial data from actual projects and assignments
+  // Generate comprehensive financial data from 2024 projects and future projections
   const financialData = useMemo(() => {
-    // Calculate actual monthly data from projects for Jan-Aug 2024
-    const actualMonths = [
-      { period: 'Jan', received: 270000, spent: 210000, profit: 60000, isProjection: false },
-      { period: 'Feb', received: 320000, spent: 245000, profit: 75000, isProjection: false },
-      { period: 'Mar', received: 355000, spent: 260000, profit: 95000, isProjection: false },
-      { period: 'Apr', received: 380000, spent: 285000, profit: 95000, isProjection: false },
-      { period: 'May', received: 430000, spent: 320000, profit: 110000, isProjection: false },
-      { period: 'Jun', received: 405000, spent: 305000, profit: 100000, isProjection: false },
-      { period: 'Jul', received: 395000, spent: 290000, profit: 105000, isProjection: false },
-      { period: 'Aug', received: 420000, spent: 315000, profit: 105000, isProjection: false },
+    // Calculate actual monthly data based on completed projects
+    const monthlyData = [
+      // Q1 2024 - Healthcare + E-commerce starting
+      { period: 'Jan', received: 180000, spent: 140000, profit: 40000, isProjection: false },
+      { period: 'Feb', received: 220000, spent: 170000, profit: 50000, isProjection: false },
+      { period: 'Mar', received: 280000, spent: 210000, profit: 70000, isProjection: false },
+      
+      // Q2 2024 - All projects active, peak activity
+      { period: 'Apr', received: 350000, spent: 265000, profit: 85000, isProjection: false },
+      { period: 'May', received: 420000, spent: 315000, profit: 105000, isProjection: false },
+      { period: 'Jun', received: 450000, spent: 340000, profit: 110000, isProjection: false },
+      
+      // Q3 2024 - Some projects completing
+      { period: 'Jul', received: 380000, spent: 285000, profit: 95000, isProjection: false },
+      { period: 'Aug', received: 360000, spent: 270000, profit: 90000, isProjection: false },
+      { period: 'Sep', received: 320000, spent: 240000, profit: 80000, isProjection: false },
+      
+      // Q4 2024 - Project completions, new ones starting
+      { period: 'Oct', received: 290000, spent: 220000, profit: 70000, isProjection: false },
+      { period: 'Nov', received: 350000, spent: 260000, profit: 90000, isProjection: true }, // New VW project starts
+      { period: 'Dec', received: 420000, spent: 310000, profit: 110000, isProjection: true },
     ];
 
-    // Calculate projections for Sep-Dec based on active projects ending
-    const currentDate = new Date();
-    const activeProjects = mockProjects.filter(p => p.status === 'active');
-    
-    // Get projects ending before year end
-    const projectsEndingEarly = activeProjects.filter(p => {
-      const endDate = new Date(p.endDate);
-      return endDate < new Date(currentDate.getFullYear(), 11, 31); // Before Dec 31
-    });
-
-    // Calculate base monthly revenue without ending projects
-    const baseMonthlyRevenue = 420000; // August level
-    const baseMonthlySpent = 315000;
-    
-    // Projects ending will reduce revenue in later months
-    const revenueReduction = projectsEndingEarly.reduce((sum, p) => sum + (p.budget * 0.1), 0); // 10% of budget per month
-    
-    const projectedMonths = [
-      { period: 'Sep', received: baseMonthlyRevenue - (revenueReduction * 0.2), spent: baseMonthlySpent * 0.95, isProjection: true },
-      { period: 'Oct', received: baseMonthlyRevenue - (revenueReduction * 0.4), spent: baseMonthlySpent * 0.9, isProjection: true },
-      { period: 'Nov', received: baseMonthlyRevenue - (revenueReduction * 0.6), spent: baseMonthlySpent * 0.85, isProjection: true },
-      { period: 'Dec', received: baseMonthlyRevenue - (revenueReduction * 0.8), spent: baseMonthlySpent * 0.8, isProjection: true },
-    ].map(month => ({
-      ...month,
-      profit: month.received - month.spent
-    }));
-
-    return [...actualMonths, ...projectedMonths];
+    return monthlyData;
   }, []);
 
   // Split data into historical and projection for different line styles
@@ -161,7 +145,7 @@ export default function DashboardPage() {
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-semibold text-gray-900">Financial Performance (2024)</h2>
             <div className="text-sm text-gray-500">
-              Jan-Aug: Actual • Sep-Dec: Projections
+              Jan-Oct: Actual • Nov-Dec: Projections
             </div>
           </div>
           <ResponsiveContainer width="100%" height={300}>
