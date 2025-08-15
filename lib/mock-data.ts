@@ -114,6 +114,7 @@ export const mockStaff: Staff[] = [
     availability: 0,
     billableHours: 168,
     totalHours: 168,
+    billableUtilization: 85,
     skills: [
       { name: 'React', level: 'expert', yearsOfExperience: 5 },
       { name: 'Node.js', level: 'senior', yearsOfExperience: 4 },
@@ -122,10 +123,14 @@ export const mockStaff: Staff[] = [
     languages: ['English', 'Spanish'],
     programmingLanguages: ['JavaScript', 'TypeScript', 'Python'],
     experience: 8,
-    rate: 150,
+    internalRate: 75,
+    clientRate: 150,
     currentProjects: ['proj-001'],
     location: 'New York, USA',
-    timezone: 'EST'
+    timezone: 'EST',
+    phone: '+1 (555) 123-4567',
+    startDate: '2022-03-15',
+    employmentType: 'full-time'
   },
   {
     id: 'staff-002',
@@ -137,6 +142,7 @@ export const mockStaff: Staff[] = [
     availability: 40,
     billableHours: 120,
     totalHours: 168,
+    billableUtilization: 78,
     skills: [
       { name: 'Figma', level: 'expert', yearsOfExperience: 4 },
       { name: 'Adobe XD', level: 'senior', yearsOfExperience: 3 },
@@ -145,10 +151,14 @@ export const mockStaff: Staff[] = [
     languages: ['English', 'French'],
     programmingLanguages: ['HTML', 'CSS', 'JavaScript'],
     experience: 6,
-    rate: 120,
+    internalRate: 60,
+    clientRate: 120,
     currentProjects: ['proj-001', 'proj-002'],
     location: 'London, UK',
-    timezone: 'GMT'
+    timezone: 'GMT',
+    phone: '+44 20 7946 0958',
+    startDate: '2021-09-01',
+    employmentType: 'full-time'
   },
   {
     id: 'staff-003',
@@ -160,6 +170,7 @@ export const mockStaff: Staff[] = [
     availability: 100,
     billableHours: 0,
     totalHours: 168,
+    billableUtilization: 0,
     skills: [
       { name: 'Python', level: 'expert', yearsOfExperience: 6 },
       { name: 'Django', level: 'senior', yearsOfExperience: 4 },
@@ -168,10 +179,14 @@ export const mockStaff: Staff[] = [
     languages: ['English', 'Mandarin'],
     programmingLanguages: ['Python', 'Go', 'SQL'],
     experience: 7,
-    rate: 140,
+    internalRate: 70,
+    clientRate: 140,
     currentProjects: [],
     location: 'San Francisco, USA',
-    timezone: 'PST'
+    timezone: 'PST',
+    phone: '+1 (555) 234-5678',
+    startDate: '2021-11-15',
+    employmentType: 'full-time'
   },
   {
     id: 'staff-004',
@@ -183,6 +198,7 @@ export const mockStaff: Staff[] = [
     availability: 60,
     billableHours: 80,
     totalHours: 168,
+    billableUtilization: 65,
     skills: [
       { name: 'Kubernetes', level: 'senior', yearsOfExperience: 3 },
       { name: 'Docker', level: 'expert', yearsOfExperience: 5 },
@@ -191,10 +207,14 @@ export const mockStaff: Staff[] = [
     languages: ['English', 'Spanish', 'Portuguese'],
     programmingLanguages: ['Python', 'Bash', 'YAML'],
     experience: 5,
-    rate: 135,
+    internalRate: 85,
+    clientRate: 135,
     currentProjects: ['proj-001', 'proj-004'],
     location: 'Madrid, Spain',
-    timezone: 'CET'
+    timezone: 'CET',
+    phone: '+34 91 123 4567',
+    startDate: '2022-06-01',
+    employmentType: 'full-time'
   },
   {
     id: 'staff-005',
@@ -206,6 +226,7 @@ export const mockStaff: Staff[] = [
     availability: 0,
     billableHours: 168,
     totalHours: 168,
+    billableUtilization: 90,
     skills: [
       { name: 'React Native', level: 'expert', yearsOfExperience: 4 },
       { name: 'iOS Development', level: 'senior', yearsOfExperience: 3 },
@@ -214,10 +235,14 @@ export const mockStaff: Staff[] = [
     languages: ['English', 'Mandarin', 'Japanese'],
     programmingLanguages: ['Swift', 'Kotlin', 'JavaScript'],
     experience: 6,
-    rate: 145,
+    internalRate: 95,
+    clientRate: 145,
     currentProjects: ['proj-002'],
     location: 'Toronto, Canada',
-    timezone: 'EST'
+    timezone: 'EST',
+    phone: '+1 (416) 123-4567',
+    startDate: '2021-08-01',
+    employmentType: 'full-time'
   },
   {
     id: 'staff-006',
@@ -229,6 +254,7 @@ export const mockStaff: Staff[] = [
     availability: 50,
     billableHours: 84,
     totalHours: 168,
+    billableUtilization: 70,
     skills: [
       { name: 'Selenium', level: 'senior', yearsOfExperience: 4 },
       { name: 'Jest', level: 'mid', yearsOfExperience: 2 },
@@ -237,10 +263,14 @@ export const mockStaff: Staff[] = [
     languages: ['English', 'French', 'German'],
     programmingLanguages: ['JavaScript', 'Python', 'Java'],
     experience: 5,
-    rate: 110,
+    internalRate: 65,
+    clientRate: 110,
     currentProjects: ['proj-002', 'proj-004'],
     location: 'Paris, France',
-    timezone: 'CET'
+    timezone: 'CET',
+    phone: '+33 1 23 45 67 89',
+    startDate: '2021-10-15',
+    employmentType: 'full-time'
   },
   {
     id: 'staff-007',
@@ -252,6 +282,7 @@ export const mockStaff: Staff[] = [
     availability: 100,
     billableHours: 0,
     totalHours: 168,
+    billableUtilization: 0,
     skills: [
       { name: 'Machine Learning', level: 'expert', yearsOfExperience: 5 },
       { name: 'TensorFlow', level: 'senior', yearsOfExperience: 3 },
@@ -260,10 +291,14 @@ export const mockStaff: Staff[] = [
     languages: ['English'],
     programmingLanguages: ['Python', 'R', 'SQL'],
     experience: 7,
-    rate: 160,
+    internalRate: 90,
+    clientRate: 160,
     currentProjects: [],
     location: 'Austin, USA',
-    timezone: 'CST'
+    timezone: 'CST',
+    phone: '+1 (512) 123-4567',
+    startDate: '2020-12-01',
+    employmentType: 'full-time'
   },
   {
     id: 'staff-008',
@@ -275,6 +310,7 @@ export const mockStaff: Staff[] = [
     availability: 30,
     billableHours: 100,
     totalHours: 168,
+    billableUtilization: 85,
     skills: [
       { name: 'Product Strategy', level: 'expert', yearsOfExperience: 7 },
       { name: 'Agile', level: 'expert', yearsOfExperience: 6 },
@@ -283,10 +319,14 @@ export const mockStaff: Staff[] = [
     languages: ['English', 'Italian'],
     programmingLanguages: ['SQL'],
     experience: 9,
-    rate: 180,
+    internalRate: 110,
+    clientRate: 180,
     currentProjects: ['proj-002', 'proj-001'],
     location: 'Milan, Italy',
-    timezone: 'CET'
+    timezone: 'CET',
+    phone: '+39 02 1234 5678',
+    startDate: '2020-01-15',
+    employmentType: 'full-time'
   },
   {
     id: 'staff-009',
@@ -298,6 +338,7 @@ export const mockStaff: Staff[] = [
     availability: 0,
     billableHours: 0,
     totalHours: 0,
+    billableUtilization: 0,
     skills: [
       { name: 'Vue.js', level: 'senior', yearsOfExperience: 3 },
       { name: 'React', level: 'mid', yearsOfExperience: 2 },
@@ -306,10 +347,14 @@ export const mockStaff: Staff[] = [
     languages: ['English'],
     programmingLanguages: ['JavaScript', 'TypeScript', 'HTML'],
     experience: 4,
-    rate: 125,
+    internalRate: 70,
+    clientRate: 125,
     currentProjects: [],
     location: 'Seattle, USA',
-    timezone: 'PST'
+    timezone: 'PST',
+    phone: '+1 (206) 123-4567',
+    startDate: '2022-05-01',
+    employmentType: 'full-time'
   },
   {
     id: 'staff-010',
@@ -321,6 +366,7 @@ export const mockStaff: Staff[] = [
     availability: 100,
     billableHours: 0,
     totalHours: 168,
+    billableUtilization: 0,
     skills: [
       { name: 'AWS', level: 'expert', yearsOfExperience: 6 },
       { name: 'Azure', level: 'senior', yearsOfExperience: 4 },
@@ -329,10 +375,14 @@ export const mockStaff: Staff[] = [
     languages: ['English', 'Polish', 'German'],
     programmingLanguages: ['Python', 'Go', 'HCL'],
     experience: 8,
-    rate: 170,
+    internalRate: 100,
+    clientRate: 170,
     currentProjects: [],
     location: 'Warsaw, Poland',
-    timezone: 'CET'
+    timezone: 'CET',
+    phone: '+48 22 123 4567',
+    startDate: '2020-08-01',
+    employmentType: 'full-time'
   }
 ];
 

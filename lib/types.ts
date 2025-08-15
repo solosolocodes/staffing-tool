@@ -33,15 +33,20 @@ export interface Staff {
   availability: number;
   billableHours: number;
   totalHours: number;
+  billableUtilization: number; // Percentage of time spent on billable work
   skills: Skill[];
   languages: string[];
   programmingLanguages: string[];
   experience: number;
-  rate: number;
+  internalRate: number; // What company pays staff member
+  clientRate: number; // What client pays for this staff member
   currentProjects: string[];
   avatar?: string;
   location: string;
   timezone: string;
+  phone?: string;
+  startDate: string;
+  employmentType: 'full-time' | 'part-time' | 'contractor' | 'intern';
 }
 
 export interface Skill {

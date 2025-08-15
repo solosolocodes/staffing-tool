@@ -23,7 +23,15 @@ export default function DashboardPage() {
     const totalSpent = mockProjects.reduce((sum, p) => sum + p.spent, 0);
     const totalProfit = totalReceived - totalSpent;
     const averageUtilization = mockStaff.reduce((sum, s) => sum + (100 - s.availability), 0) / totalStaff;
+    const averageBillableUtilization = mockStaff.reduce((sum, s) => sum + s.billableUtilization, 0) / totalStaff;
     const projectsAtRisk = mockProjects.filter(p => p.progress < 50 && (p.priority === 'high' || p.priority === 'critical')).length;
+    
+    // Calculate staff financial metrics
+    const totalStaffProfit = mockStaff.reduce((sum, s) => sum + (s.clientRate - s.internalRate), 0);
+    const averageStaffMargin = mockStaff.reduce((sum, s) => {
+      const margin = s.clientRate > 0 ? ((s.clientRate - s.internalRate) / s.clientRate) * 100 : 0;
+      return sum + margin;
+    }, 0) / totalStaff;
 
     return {
       totalProjects,
@@ -35,17 +43,20 @@ export default function DashboardPage() {
       totalSpent,
       totalProfit,
       averageUtilization,
-      projectsAtRisk
+      averageBillableUtilization,
+      projectsAtRisk,
+      totalStaffProfit,
+      averageStaffMargin
     };
   }, []);
 
   const utilizationData = [
-    { month: 'Jan', utilization: 72 },
-    { month: 'Feb', utilization: 78 },
-    { month: 'Mar', utilization: 85 },
-    { month: 'Apr', utilization: 82 },
-    { month: 'May', utilization: 88 },
-    { month: 'Jun', utilization: 76 },
+    { month: 'Jan', utilization: 72, billable: 65 },
+    { month: 'Feb', utilization: 78, billable: 70 },
+    { month: 'Mar', utilization: 85, billable: 75 },
+    { month: 'Apr', utilization: 82, billable: 72 },
+    { month: 'May', utilization: 88, billable: 78 },
+    { month: 'Jun', utilization: 76, billable: 68 },
   ];
 
   const departmentData = [
@@ -88,11 +99,11 @@ export default function DashboardPage() {
           trend={{ value: 5, isPositive: true }}
         />
         <MetricCard
-          title="Utilization Rate"
-          value={formatPercentage(metrics.averageUtilization)}
+          title="Billable Utilization"
+          value={formatPercentage(metrics.averageBillableUtilization)}
           icon={Activity}
-          trend={{ value: 8, isPositive: true }}
-          description="Average across all staff"
+          trend={{ value: 12, isPositive: true }}
+          description="Average billable time"
         />
         <MetricCard
           title="Total Profit"
@@ -231,14 +242,16 @@ export default function DashboardPage() {
       </div>
 
       <div className="rounded-xl bg-white border border-gray-200 p-6">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">Utilization Trend</h2>
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">Utilization & Billability Trend</h2>
         <ResponsiveContainer width="100%" height={250}>
           <BarChart data={utilizationData}>
             <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
             <XAxis dataKey="month" stroke="#6b7280" />
             <YAxis stroke="#6b7280" tickFormatter={(value) => `${value}%`} />
             <Tooltip formatter={(value: number) => `${value}%`} />
-            <Bar dataKey="utilization" fill="#3C89A9" radius={[8, 8, 0, 0]} />
+            <Legend />
+            <Bar dataKey="utilization" fill="#3C89A9" radius={[4, 4, 0, 0]} name="Utilization" />
+            <Bar dataKey="billable" fill="#2c6b87" radius={[4, 4, 0, 0]} name="Billable" />
           </BarChart>
         </ResponsiveContainer>
       </div>
