@@ -2,18 +2,14 @@
 
 import { useState } from 'react';
 import {
-  Plus,
   Search,
-  Calendar,
-  Users,
-  Clock,
   ChevronRight,
   AlertCircle,
   CheckCircle,
   XCircle,
   UserPlus,
   Briefcase,
-  TrendingUp
+  Clock
 } from 'lucide-react';
 import { mockProjects, mockStaff, mockAssignments } from '@/lib/mock-data';
 import { formatPercentage, getStatusColor } from '@/lib/utils';

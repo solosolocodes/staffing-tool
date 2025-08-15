@@ -4,19 +4,16 @@ import { useState } from 'react';
 import {
   Plus,
   Search,
-  Filter,
   Calendar,
   DollarSign,
   Users,
-  Clock,
   MoreVertical,
   TrendingUp,
-  AlertCircle,
   Edit,
   Trash2,
   Eye
 } from 'lucide-react';
-import { mockProjects, mockStaff } from '@/lib/mock-data';
+import { mockProjects } from '@/lib/mock-data';
 import { formatCurrency, formatPercentage, getStatusColor, getPriorityColor } from '@/lib/utils';
 import { format } from 'date-fns';
 

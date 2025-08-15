@@ -1,19 +1,15 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useMemo } from 'react';
 import {
   Users,
   FolderKanban,
-  TrendingUp,
   DollarSign,
-  AlertCircle,
-  Clock,
-  Activity,
-  Calendar
+  Activity
 } from 'lucide-react';
 import MetricCard from '@/components/metric-card';
 import { mockProjects, mockStaff } from '@/lib/mock-data';
-import { formatCurrency, formatPercentage, getStatusColor, getPriorityColor } from '@/lib/utils';
+import { formatCurrency, formatPercentage, getPriorityColor } from '@/lib/utils';
 import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 export default function DashboardPage() {
@@ -111,7 +107,7 @@ export default function DashboardPage() {
               <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
               <XAxis dataKey="month" stroke="#6b7280" />
               <YAxis stroke="#6b7280" tickFormatter={(value) => `$${value/1000}k`} />
-              <Tooltip formatter={(value: any) => formatCurrency(value)} />
+              <Tooltip formatter={(value: number) => formatCurrency(value)} />
               <Legend />
               <Line type="monotone" dataKey="revenue" stroke="#3B82F6" strokeWidth={2} name="Revenue" />
               <Line type="monotone" dataKey="cost" stroke="#EF4444" strokeWidth={2} name="Cost" />
@@ -226,7 +222,7 @@ export default function DashboardPage() {
             <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
             <XAxis dataKey="month" stroke="#6b7280" />
             <YAxis stroke="#6b7280" tickFormatter={(value) => `${value}%`} />
-            <Tooltip formatter={(value: any) => `${value}%`} />
+            <Tooltip formatter={(value: number) => `${value}%`} />
             <Bar dataKey="utilization" fill="#3B82F6" radius={[8, 8, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>

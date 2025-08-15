@@ -2,17 +2,11 @@
 
 import { useState } from 'react';
 import {
-  Plus,
   Search,
-  Filter,
   MapPin,
-  Clock,
-  Code,
-  Languages,
   DollarSign,
   MoreVertical,
   Mail,
-  Star,
   Briefcase,
   Edit,
   Trash2,
