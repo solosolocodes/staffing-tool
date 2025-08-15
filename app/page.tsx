@@ -123,12 +123,20 @@ export default function DashboardPage() {
     return yearData[selectedYear] || [];
   }, [selectedYear]);
 
-  // Split data into historical and projection for different line styles
-  const historicalData = financialData.filter(d => !d.isProjection);
-  const projectionData = financialData.filter(d => d.isProjection);
-  // Add the last historical point to projection data to connect the lines
-  const connectedProjectionData = historicalData.length > 0 ? 
-    [historicalData[historicalData.length - 1], ...projectionData] : projectionData;
+  // Process data to create separate series for actual and projected values
+  const chartData = useMemo(() => {
+    return financialData.map((item) => ({
+      period: item.period,
+      // Actual values (solid lines)
+      received: !item.isProjection ? item.received : null,
+      spent: !item.isProjection ? item.spent : null,
+      profit: !item.isProjection ? item.profit : null,
+      // Projected values (dotted lines)
+      receivedProjected: item.isProjection ? item.received : null,
+      spentProjected: item.isProjection ? item.spent : null,
+      profitProjected: item.isProjection ? item.profit : null,
+    }));
+  }, [financialData]);
 
 
   return (
@@ -189,27 +197,24 @@ export default function DashboardPage() {
             </div>
           </div>
           <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={financialData}>
+            <LineChart data={chartData}>
               <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
               <XAxis dataKey="period" stroke="#6b7280" />
               <YAxis stroke="#6b7280" tickFormatter={(value) => `€${value/1000}k`} />
               <Tooltip 
-                formatter={(value: number, name: string, entry: { payload?: { isProjection?: boolean } }) => [
-                  formatCurrency(value), 
-                  `${name}${entry.payload?.isProjection ? ' (Projected)' : ''}`
-                ]} 
+                formatter={(value: number) => formatCurrency(value)} 
                 labelFormatter={(label) => `Period: ${label}`}
               />
               <Legend />
-              {/* Historical Data - Solid Lines */}
+              {/* Actual Data - Solid Lines */}
               <Line 
                 type="monotone" 
                 dataKey="received" 
                 stroke="#3C89A9" 
                 strokeWidth={2} 
                 name="Client Paid"
-                data={historicalData}
-                connectNulls={false}
+                connectNulls={true}
+                dot={false}
               />
               <Line 
                 type="monotone" 
@@ -217,8 +222,8 @@ export default function DashboardPage() {
                 stroke="#DC2626" 
                 strokeWidth={2} 
                 name="Staffing Costs"
-                data={historicalData}
-                connectNulls={false}
+                connectNulls={true}
+                dot={false}
               />
               <Line 
                 type="monotone" 
@@ -226,43 +231,37 @@ export default function DashboardPage() {
                 stroke="#10B981" 
                 strokeWidth={2} 
                 name="Gross Profit"
-                data={historicalData}
-                connectNulls={false}
+                connectNulls={true}
+                dot={false}
               />
               {/* Projected Data - Dashed Lines */}
               <Line 
                 type="monotone" 
-                dataKey="received" 
+                dataKey="receivedProjected" 
                 stroke="#3C89A9" 
                 strokeWidth={2} 
                 strokeDasharray="8 4"
-                name="Projected Paid"
-                data={connectedProjectionData}
-                connectNulls={false}
+                connectNulls={true}
                 dot={false}
                 legendType="none"
               />
               <Line 
                 type="monotone" 
-                dataKey="spent" 
+                dataKey="spentProjected" 
                 stroke="#DC2626" 
                 strokeWidth={2} 
                 strokeDasharray="8 4"
-                name="Projected Costs"
-                data={connectedProjectionData}
-                connectNulls={false}
+                connectNulls={true}
                 dot={false}
                 legendType="none"
               />
               <Line 
                 type="monotone" 
-                dataKey="profit" 
+                dataKey="profitProjected" 
                 stroke="#10B981" 
                 strokeWidth={2} 
                 strokeDasharray="8 4"
-                name="Projected Profit"
-                data={connectedProjectionData}
-                connectNulls={false}
+                connectNulls={true}
                 dot={false}
                 legendType="none"
               />
