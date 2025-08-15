@@ -1,18 +1,23 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import {
   Users,
   FolderKanban,
   DollarSign,
-  Activity
+  Activity,
+  Filter
 } from 'lucide-react';
 import MetricCard from '@/components/metric-card';
 import { mockProjects, mockStaff } from '@/lib/mock-data';
 import { formatCurrency, formatPercentage, getPriorityColor } from '@/lib/utils';
 import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
+type FilterPeriod = 'month' | 'quarter' | 'year';
+
 export default function DashboardPage() {
+  const [financialFilterPeriod, setFinancialFilterPeriod] = useState<FilterPeriod>('month');
+
   const metrics = useMemo(() => {
     const totalProjects = mockProjects.length;
     const activeProjects = mockProjects.filter(p => p.status === 'active').length;
@@ -67,14 +72,60 @@ export default function DashboardPage() {
     { name: 'Infrastructure', value: 10, color: '#1e5468' },
   ];
 
-  const revenueData = [
-    { month: 'Jan', received: 270000, spent: 210000, profit: 60000 },
-    { month: 'Feb', received: 320000, spent: 245000, profit: 75000 },
-    { month: 'Mar', received: 355000, spent: 260000, profit: 95000 },
-    { month: 'Apr', received: 380000, spent: 285000, profit: 95000 },
-    { month: 'May', received: 430000, spent: 320000, profit: 110000 },
-    { month: 'Jun', received: 405000, spent: 305000, profit: 100000 },
-  ];
+  // Generate dynamic financial data based on filter selection
+  const financialData = useMemo(() => {
+    const baseData = {
+      year: [
+        { period: '2022', received: 2850000, spent: 2200000, profit: 650000, isProjection: false },
+        { period: '2023', received: 3400000, spent: 2600000, profit: 800000, isProjection: false },
+        { period: '2024', received: 4200000, spent: 3100000, profit: 1100000, isProjection: false },
+        // Projections
+        { period: '2025', received: 4850000, spent: 3550000, profit: 1300000, isProjection: true },
+        { period: '2026', received: 5500000, spent: 4000000, profit: 1500000, isProjection: true },
+      ],
+      quarter: [
+        { period: 'Q1 2024', received: 950000, spent: 720000, profit: 230000, isProjection: false },
+        { period: 'Q2 2024', received: 1100000, spent: 850000, profit: 250000, isProjection: false },
+        { period: 'Q3 2024', received: 1200000, spent: 900000, profit: 300000, isProjection: false },
+        { period: 'Q4 2024', received: 950000, spent: 630000, profit: 320000, isProjection: false },
+        // Projections
+        { period: 'Q1 2025', received: 1150000, spent: 820000, profit: 330000, isProjection: true },
+        { period: 'Q2 2025', received: 1250000, spent: 900000, profit: 350000, isProjection: true },
+      ],
+      month: [
+        { period: 'Jan', received: 270000, spent: 210000, profit: 60000, isProjection: false },
+        { period: 'Feb', received: 320000, spent: 245000, profit: 75000, isProjection: false },
+        { period: 'Mar', received: 355000, spent: 260000, profit: 95000, isProjection: false },
+        { period: 'Apr', received: 380000, spent: 285000, profit: 95000, isProjection: false },
+        { period: 'May', received: 430000, spent: 320000, profit: 110000, isProjection: false },
+        { period: 'Jun', received: 405000, spent: 305000, profit: 100000, isProjection: false },
+        { period: 'Jul', received: 395000, spent: 290000, profit: 105000, isProjection: false },
+        { period: 'Aug', received: 420000, spent: 315000, profit: 105000, isProjection: false },
+        // Projections for next 6 months
+        { period: 'Sep', received: 445000, spent: 330000, profit: 115000, isProjection: true },
+        { period: 'Oct', received: 465000, spent: 345000, profit: 120000, isProjection: true },
+        { period: 'Nov', received: 485000, spent: 360000, profit: 125000, isProjection: true },
+        { period: 'Dec', received: 520000, spent: 380000, profit: 140000, isProjection: true },
+        { period: 'Jan 2025', received: 550000, spent: 400000, profit: 150000, isProjection: true },
+        { period: 'Feb 2025', received: 575000, spent: 420000, profit: 155000, isProjection: true },
+      ]
+    };
+
+    return baseData[financialFilterPeriod] || baseData.month;
+  }, [financialFilterPeriod]);
+
+  // Split data into historical and projection for different line styles
+  const historicalData = financialData.filter(d => !d.isProjection);
+  const projectionData = financialData.filter(d => d.isProjection);
+  // Add the last historical point to projection data to connect the lines
+  const connectedProjectionData = historicalData.length > 0 ? 
+    [historicalData[historicalData.length - 1], ...projectionData] : projectionData;
+
+  const getFinancialPeriodLabel = () => {
+    const periodName = financialFilterPeriod === 'month' ? 'Monthly' : 
+                      financialFilterPeriod === 'quarter' ? 'Quarterly' : 'Annual';
+    return `${periodName} Financial Performance`;
+  };
 
   return (
     <div className="space-y-6">
@@ -116,19 +167,111 @@ export default function DashboardPage() {
 
       <div className="grid gap-6 lg:grid-cols-2">
         <div className="rounded-xl bg-white border border-gray-200 p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Financial Performance</h2>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold text-gray-900">{getFinancialPeriodLabel()}</h2>
+            <div className="flex items-center gap-2">
+              <Filter className="h-4 w-4 text-gray-400" />
+              <select
+                value={financialFilterPeriod}
+                onChange={(e) => setFinancialFilterPeriod(e.target.value as FilterPeriod)}
+                className="text-sm rounded-md border border-gray-300 px-2 py-1 focus:border-[#3C89A9] focus:outline-none focus:ring-1 focus:ring-[#3C89A9]"
+              >
+                <option value="month">Monthly</option>
+                <option value="quarter">Quarterly</option>
+                <option value="year">Annual</option>
+              </select>
+            </div>
+          </div>
           <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={revenueData}>
+            <LineChart data={financialData}>
               <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-              <XAxis dataKey="month" stroke="#6b7280" />
-              <YAxis stroke="#6b7280" tickFormatter={(value) => `$${value/1000}k`} />
-              <Tooltip formatter={(value: number) => formatCurrency(value)} />
+              <XAxis dataKey="period" stroke="#6b7280" />
+              <YAxis stroke="#6b7280" tickFormatter={(value) => `€${value/1000}k`} />
+              <Tooltip 
+                formatter={(value: number, name: string, entry: { payload?: { isProjection?: boolean } }) => [
+                  formatCurrency(value), 
+                  `${name}${entry.payload?.isProjection ? ' (Projected)' : ''}`
+                ]} 
+                labelFormatter={(label) => `Period: ${label}`}
+              />
               <Legend />
-              <Line type="monotone" dataKey="received" stroke="#3C89A9" strokeWidth={2} name="Client Paid" />
-              <Line type="monotone" dataKey="spent" stroke="#2c6b87" strokeWidth={2} name="Staffing Costs" />
-              <Line type="monotone" dataKey="profit" stroke="#10B981" strokeWidth={2} name="Gross Profit" />
+              {/* Historical Data - Solid Lines */}
+              <Line 
+                type="monotone" 
+                dataKey="received" 
+                stroke="#3C89A9" 
+                strokeWidth={2} 
+                name="Client Paid"
+                data={historicalData}
+                connectNulls={false}
+              />
+              <Line 
+                type="monotone" 
+                dataKey="spent" 
+                stroke="#2c6b87" 
+                strokeWidth={2} 
+                name="Staffing Costs"
+                data={historicalData}
+                connectNulls={false}
+              />
+              <Line 
+                type="monotone" 
+                dataKey="profit" 
+                stroke="#10B981" 
+                strokeWidth={2} 
+                name="Gross Profit"
+                data={historicalData}
+                connectNulls={false}
+              />
+              {/* Projected Data - Dashed Lines */}
+              <Line 
+                type="monotone" 
+                dataKey="received" 
+                stroke="#3C89A9" 
+                strokeWidth={2} 
+                strokeDasharray="8 4"
+                name="Projected Paid"
+                data={connectedProjectionData}
+                connectNulls={false}
+                dot={false}
+                legendType="none"
+              />
+              <Line 
+                type="monotone" 
+                dataKey="spent" 
+                stroke="#2c6b87" 
+                strokeWidth={2} 
+                strokeDasharray="8 4"
+                name="Projected Costs"
+                data={connectedProjectionData}
+                connectNulls={false}
+                dot={false}
+                legendType="none"
+              />
+              <Line 
+                type="monotone" 
+                dataKey="profit" 
+                stroke="#10B981" 
+                strokeWidth={2} 
+                strokeDasharray="8 4"
+                name="Projected Profit"
+                data={connectedProjectionData}
+                connectNulls={false}
+                dot={false}
+                legendType="none"
+              />
             </LineChart>
           </ResponsiveContainer>
+          <div className="mt-2 flex items-center gap-4 text-xs text-gray-500">
+            <div className="flex items-center gap-1">
+              <div className="w-3 h-0.5 bg-[#3C89A9]"></div>
+              <span>Historical Data</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <div className="w-3 h-0.5 bg-[#3C89A9] border-dashed border-t border-[#3C89A9]" style={{borderStyle: 'dashed'}}></div>
+              <span>Projections</span>
+            </div>
+          </div>
         </div>
 
         <div className="rounded-xl bg-white border border-gray-200 p-6">
