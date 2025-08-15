@@ -106,11 +106,11 @@ export default function DashboardPage() {
           description="Average billable time"
         />
         <MetricCard
-          title="Total Profit"
+          title="Gross Profit"
           value={formatCurrency(metrics.totalProfit)}
           icon={DollarSign}
           trend={{ value: 18, isPositive: metrics.totalProfit > 0 }}
-          description={`${formatCurrency(metrics.totalReceived)} received - ${formatCurrency(metrics.totalSpent)} spent`}
+          description={`${formatCurrency(metrics.totalReceived)} paid - ${formatCurrency(metrics.totalSpent)} staffing costs`}
         />
       </div>
 
@@ -124,9 +124,9 @@ export default function DashboardPage() {
               <YAxis stroke="#6b7280" tickFormatter={(value) => `$${value/1000}k`} />
               <Tooltip formatter={(value: number) => formatCurrency(value)} />
               <Legend />
-              <Line type="monotone" dataKey="received" stroke="#3C89A9" strokeWidth={2} name="Received" />
-              <Line type="monotone" dataKey="spent" stroke="#2c6b87" strokeWidth={2} name="Spent" />
-              <Line type="monotone" dataKey="profit" stroke="#10B981" strokeWidth={2} name="Profit" />
+              <Line type="monotone" dataKey="received" stroke="#3C89A9" strokeWidth={2} name="Client Paid" />
+              <Line type="monotone" dataKey="spent" stroke="#2c6b87" strokeWidth={2} name="Staffing Costs" />
+              <Line type="monotone" dataKey="profit" stroke="#10B981" strokeWidth={2} name="Gross Profit" />
             </LineChart>
           </ResponsiveContainer>
         </div>

@@ -255,7 +255,7 @@ export default function ProjectEditModal({
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Budget
+                Client Budget
               </label>
               <input
                 type="number"
@@ -268,7 +268,7 @@ export default function ProjectEditModal({
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Received Amount
+                Client Already Paid
               </label>
               <input
                 type="number"
@@ -319,7 +319,7 @@ export default function ProjectEditModal({
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold text-gray-900">Team Assignment</h3>
               <div className="flex items-center gap-4 text-sm text-gray-600">
-                <span>Total Cost: {formatCurrency(calculateTotalCost())}</span>
+                <span>Total Staffing Costs: {formatCurrency(calculateTotalCost())}</span>
                 <span>Team Size: {assignments.length}</span>
               </div>
             </div>
@@ -413,7 +413,7 @@ export default function ProjectEditModal({
 
                     <div className="flex items-center justify-between mt-3 pt-3 border-t border-gray-100">
                       <div className="text-sm text-gray-600">
-                        Total Cost: {formatCurrency(assignment.totalCost)}
+                        Assignment Cost: {formatCurrency(assignment.totalCost)}
                       </div>
                       {mode !== 'view' && (
                         <div className="flex items-center gap-2">

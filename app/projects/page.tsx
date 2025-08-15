@@ -214,19 +214,19 @@ export default function ProjectsPage() {
                 <div className="bg-gray-50 rounded-lg p-3">
                   <div className="grid grid-cols-2 gap-2 text-sm">
                     <div>
-                      <span className="text-gray-500">Budget:</span>
+                      <span className="text-gray-500">Client Budget:</span>
                       <div className="font-medium text-gray-900">{formatCurrency(project.budget)}</div>
                     </div>
                     <div>
-                      <span className="text-gray-500">Received:</span>
+                      <span className="text-gray-500">Client Paid:</span>
                       <div className="font-medium text-green-600">{formatCurrency(project.receivedAmount)}</div>
                     </div>
                     <div>
-                      <span className="text-gray-500">Spent:</span>
+                      <span className="text-gray-500">Staffing Costs:</span>
                       <div className="font-medium text-red-600">{formatCurrency(project.spent)}</div>
                     </div>
                     <div>
-                      <span className="text-gray-500">Profit:</span>
+                      <span className="text-gray-500">Gross Profit:</span>
                       <div className={`font-medium ${(project.receivedAmount - project.spent) >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                         {formatCurrency(project.receivedAmount - project.spent)}
                       </div>
@@ -291,7 +291,7 @@ export default function ProjectsPage() {
                   Team
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Budget
+                  Financial
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Progress
@@ -332,7 +332,7 @@ export default function ProjectsPage() {
                   <td className="px-6 py-4">
                     <div>
                       <div className="text-sm text-gray-900">{formatCurrency(project.budget)}</div>
-                      <div className="text-xs text-gray-500">{formatCurrency(project.spent)} spent</div>
+                      <div className="text-xs text-gray-500">{formatCurrency(project.spent)} staffing costs</div>
                     </div>
                   </td>
                   <td className="px-6 py-4">
