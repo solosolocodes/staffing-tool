@@ -1,0 +1,236 @@
+'use client';
+
+import { useState, useMemo } from 'react';
+import {
+  Users,
+  FolderKanban,
+  TrendingUp,
+  DollarSign,
+  AlertCircle,
+  Clock,
+  Activity,
+  Calendar
+} from 'lucide-react';
+import MetricCard from '@/components/metric-card';
+import { mockProjects, mockStaff } from '@/lib/mock-data';
+import { formatCurrency, formatPercentage, getStatusColor, getPriorityColor } from '@/lib/utils';
+import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+
+export default function DashboardPage() {
+  const metrics = useMemo(() => {
+    const totalProjects = mockProjects.length;
+    const activeProjects = mockProjects.filter(p => p.status === 'active').length;
+    const totalStaff = mockStaff.length;
+    const availableStaff = mockStaff.filter(s => s.status === 'available').length;
+    const totalRevenue = mockProjects.reduce((sum, p) => sum + p.revenue, 0);
+    const totalSpent = mockProjects.reduce((sum, p) => sum + p.spent, 0);
+    const averageUtilization = mockStaff.reduce((sum, s) => sum + (100 - s.availability), 0) / totalStaff;
+    const projectsAtRisk = mockProjects.filter(p => p.progress < 50 && p.priority === 'high').length;
+
+    return {
+      totalProjects,
+      activeProjects,
+      totalStaff,
+      availableStaff,
+      totalRevenue,
+      totalSpent,
+      averageUtilization,
+      projectsAtRisk
+    };
+  }, []);
+
+  const utilizationData = [
+    { month: 'Jan', utilization: 72 },
+    { month: 'Feb', utilization: 78 },
+    { month: 'Mar', utilization: 85 },
+    { month: 'Apr', utilization: 82 },
+    { month: 'May', utilization: 88 },
+    { month: 'Jun', utilization: 76 },
+  ];
+
+  const departmentData = [
+    { name: 'Engineering', value: 45, color: '#3B82F6' },
+    { name: 'Design', value: 15, color: '#8B5CF6' },
+    { name: 'QA', value: 12, color: '#10B981' },
+    { name: 'Product', value: 18, color: '#F59E0B' },
+    { name: 'Infrastructure', value: 10, color: '#EF4444' },
+  ];
+
+  const revenueData = [
+    { month: 'Jan', revenue: 420000, cost: 320000 },
+    { month: 'Feb', revenue: 480000, cost: 360000 },
+    { month: 'Mar', revenue: 520000, cost: 380000 },
+    { month: 'Apr', revenue: 550000, cost: 400000 },
+    { month: 'May', revenue: 610000, cost: 440000 },
+    { month: 'Jun', revenue: 580000, cost: 420000 },
+  ];
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
+        <p className="mt-1 text-sm text-gray-500">Overview of your staffing and project metrics</p>
+      </div>
+
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <MetricCard
+          title="Active Projects"
+          value={`${metrics.activeProjects}/${metrics.totalProjects}`}
+          icon={FolderKanban}
+          trend={{ value: 12, isPositive: true }}
+          description="Currently in progress"
+        />
+        <MetricCard
+          title="Total Staff"
+          value={metrics.totalStaff}
+          icon={Users}
+          description={`${metrics.availableStaff} available`}
+          trend={{ value: 5, isPositive: true }}
+        />
+        <MetricCard
+          title="Utilization Rate"
+          value={formatPercentage(metrics.averageUtilization)}
+          icon={Activity}
+          trend={{ value: 8, isPositive: true }}
+          description="Average across all staff"
+        />
+        <MetricCard
+          title="Monthly Revenue"
+          value={formatCurrency(metrics.totalRevenue / 6)}
+          icon={DollarSign}
+          trend={{ value: 15, isPositive: true }}
+          description="Average per month"
+        />
+      </div>
+
+      <div className="grid gap-6 lg:grid-cols-2">
+        <div className="rounded-xl bg-white border border-gray-200 p-6">
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">Revenue vs Cost</h2>
+          <ResponsiveContainer width="100%" height={300}>
+            <LineChart data={revenueData}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+              <XAxis dataKey="month" stroke="#6b7280" />
+              <YAxis stroke="#6b7280" tickFormatter={(value) => `$${value/1000}k`} />
+              <Tooltip formatter={(value: any) => formatCurrency(value)} />
+              <Legend />
+              <Line type="monotone" dataKey="revenue" stroke="#3B82F6" strokeWidth={2} name="Revenue" />
+              <Line type="monotone" dataKey="cost" stroke="#EF4444" strokeWidth={2} name="Cost" />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+
+        <div className="rounded-xl bg-white border border-gray-200 p-6">
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">Staff by Department</h2>
+          <ResponsiveContainer width="100%" height={300}>
+            <PieChart>
+              <Pie
+                data={departmentData}
+                cx="50%"
+                cy="50%"
+                labelLine={false}
+                label={({ name, value }) => `${name}: ${value}%`}
+                outerRadius={100}
+                fill="#8884d8"
+                dataKey="value"
+              >
+                {departmentData.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={entry.color} />
+                ))}
+              </Pie>
+              <Tooltip />
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      <div className="grid gap-6 lg:grid-cols-3">
+        <div className="lg:col-span-2 rounded-xl bg-white border border-gray-200 p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold text-gray-900">Active Projects</h2>
+            <button className="text-sm text-blue-600 hover:text-blue-700 font-medium">
+              View all
+            </button>
+          </div>
+          <div className="space-y-3">
+            {mockProjects
+              .filter(p => p.status === 'active')
+              .slice(0, 5)
+              .map((project) => (
+                <div key={project.id} className="flex items-center justify-between p-4 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-3">
+                      <h3 className="font-medium text-gray-900">{project.name}</h3>
+                      <span className={`text-xs font-medium ${getPriorityColor(project.priority)}`}>
+                        {project.priority.toUpperCase()}
+                      </span>
+                    </div>
+                    <p className="text-sm text-gray-500 mt-1">{project.client}</p>
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <div className="text-right">
+                      <p className="text-sm font-medium text-gray-900">{project.teamSize} members</p>
+                      <p className="text-xs text-gray-500">{formatPercentage(project.progress)} complete</p>
+                    </div>
+                    <div className="w-24">
+                      <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+                        <div
+                          className="h-full bg-blue-500 transition-all"
+                          style={{ width: `${project.progress}%` }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+          </div>
+        </div>
+
+        <div className="rounded-xl bg-white border border-gray-200 p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold text-gray-900">Available Staff</h2>
+            <button className="text-sm text-blue-600 hover:text-blue-700 font-medium">
+              View all
+            </button>
+          </div>
+          <div className="space-y-3">
+            {mockStaff
+              .filter(s => s.status === 'available' || s.availability > 50)
+              .slice(0, 6)
+              .map((staff) => (
+                <div key={staff.id} className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50">
+                  <div className="flex items-center gap-3">
+                    <div className="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center">
+                      <span className="text-xs font-medium text-gray-600">
+                        {staff.name.split(' ').map(n => n[0]).join('')}
+                      </span>
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-gray-900">{staff.name}</p>
+                      <p className="text-xs text-gray-500">{staff.role}</p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm font-medium text-green-600">{staff.availability}%</p>
+                    <p className="text-xs text-gray-500">available</p>
+                  </div>
+                </div>
+              ))}
+          </div>
+        </div>
+      </div>
+
+      <div className="rounded-xl bg-white border border-gray-200 p-6">
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">Utilization Trend</h2>
+        <ResponsiveContainer width="100%" height={250}>
+          <BarChart data={utilizationData}>
+            <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+            <XAxis dataKey="month" stroke="#6b7280" />
+            <YAxis stroke="#6b7280" tickFormatter={(value) => `${value}%`} />
+            <Tooltip formatter={(value: any) => `${value}%`} />
+            <Bar dataKey="utilization" fill="#3B82F6" radius={[8, 8, 0, 0]} />
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+    </div>
+  );
+}
