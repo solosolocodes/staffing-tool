@@ -261,6 +261,36 @@ export default function AnalyticsPage() {
         </div>
       </div>
 
+      {/* Leaderboards */}
+      <div className="grid gap-6 lg:grid-cols-3">
+        <LeaderboardCard
+          title="Top Earners"
+          data={topEarners}
+          valueKey="totalBillableUSD"
+          formatValue={(value) => formatCurrency(value)}
+          icon={Trophy}
+          color="bg-yellow-500"
+        />
+
+        <LeaderboardCard
+          title="Most Available"
+          data={topAvailable}
+          valueKey="availability"
+          formatValue={(value) => formatPercentage(value)}
+          icon={Activity}
+          color="bg-green-500"
+        />
+
+        <LeaderboardCard
+          title="Top Performers"
+          data={topUtilization}
+          valueKey="utilizationScore"
+          formatValue={(value) => `${Math.round(value)}%`}
+          icon={Award}
+          color="bg-[#3C89A9]"
+        />
+      </div>
+
       {/* Summary Cards */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <div className="rounded-xl bg-white border border-gray-200 p-6">
@@ -321,36 +351,6 @@ export default function AnalyticsPage() {
             </div>
           </div>
         </div>
-      </div>
-
-      {/* Leaderboards */}
-      <div className="grid gap-6 lg:grid-cols-3">
-        <LeaderboardCard
-          title="Top Earners"
-          data={topEarners}
-          valueKey="totalBillableUSD"
-          formatValue={(value) => formatCurrency(value)}
-          icon={Trophy}
-          color="bg-yellow-500"
-        />
-
-        <LeaderboardCard
-          title="Most Available"
-          data={topAvailable}
-          valueKey="availability"
-          formatValue={(value) => formatPercentage(value)}
-          icon={Activity}
-          color="bg-green-500"
-        />
-
-        <LeaderboardCard
-          title="Top Performers"
-          data={topUtilization}
-          valueKey="utilizationScore"
-          formatValue={(value) => `${Math.round(value)}%`}
-          icon={Award}
-          color="bg-[#3C89A9]"
-        />
       </div>
 
       {/* Detailed Stats Table */}
