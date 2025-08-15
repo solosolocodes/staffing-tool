@@ -45,11 +45,11 @@ export default function DashboardPage() {
   ];
 
   const departmentData = [
-    { name: 'Engineering', value: 45, color: '#3B82F6' },
-    { name: 'Design', value: 15, color: '#8B5CF6' },
-    { name: 'QA', value: 12, color: '#10B981' },
-    { name: 'Product', value: 18, color: '#F59E0B' },
-    { name: 'Infrastructure', value: 10, color: '#EF4444' },
+    { name: 'Engineering', value: 45, color: '#3C89A9' },
+    { name: 'Design', value: 15, color: '#4a90b8' },
+    { name: 'QA', value: 12, color: '#5ba0c4' },
+    { name: 'Product', value: 18, color: '#2c6b87' },
+    { name: 'Infrastructure', value: 10, color: '#1e5468' },
   ];
 
   const revenueData = [
@@ -109,8 +109,8 @@ export default function DashboardPage() {
               <YAxis stroke="#6b7280" tickFormatter={(value) => `$${value/1000}k`} />
               <Tooltip formatter={(value: number) => formatCurrency(value)} />
               <Legend />
-              <Line type="monotone" dataKey="revenue" stroke="#3B82F6" strokeWidth={2} name="Revenue" />
-              <Line type="monotone" dataKey="cost" stroke="#EF4444" strokeWidth={2} name="Cost" />
+              <Line type="monotone" dataKey="revenue" stroke="#3C89A9" strokeWidth={2} name="Revenue" />
+              <Line type="monotone" dataKey="cost" stroke="#2c6b87" strokeWidth={2} name="Cost" />
             </LineChart>
           </ResponsiveContainer>
         </div>
@@ -223,7 +223,7 @@ export default function DashboardPage() {
             <XAxis dataKey="month" stroke="#6b7280" />
             <YAxis stroke="#6b7280" tickFormatter={(value) => `${value}%`} />
             <Tooltip formatter={(value: number) => `${value}%`} />
-            <Bar dataKey="utilization" fill="#3B82F6" radius={[8, 8, 0, 0]} />
+            <Bar dataKey="utilization" fill="#3C89A9" radius={[8, 8, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
       </div>

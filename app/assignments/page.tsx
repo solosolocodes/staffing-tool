@@ -47,7 +47,7 @@ export default function AssignmentsPage() {
           <h1 className="text-3xl font-bold text-gray-900">Assignments</h1>
           <p className="mt-1 text-sm text-gray-500">Manage staff assignments to projects</p>
         </div>
-        <button className="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700">
+        <button className="flex items-center gap-2 rounded-lg bg-[#3C89A9] px-4 py-2 text-sm font-medium text-white hover:bg-[#2c6b87] shadow-sm">
           <UserPlus className="h-4 w-4" />
           New Assignment
         </button>
@@ -68,7 +68,7 @@ export default function AssignmentsPage() {
                     onClick={() => setSelectedProject(project.id)}
                     className={`rounded-lg border p-4 cursor-pointer transition-all ${
                       isSelected 
-                        ? 'border-blue-500 bg-blue-50' 
+                        ? 'border-[#3C89A9] bg-[#3C89A9]/5' 
                         : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
                     }`}
                   >
@@ -141,7 +141,7 @@ export default function AssignmentsPage() {
                   type="checkbox"
                   checked={showAvailableOnly}
                   onChange={(e) => setShowAvailableOnly(e.target.checked)}
-                  className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                  className="rounded border-gray-300 text-[#3C89A9] focus:ring-[#3C89A9]"
                 />
                 <span className="text-gray-600">Available only</span>
               </label>
@@ -155,7 +155,7 @@ export default function AssignmentsPage() {
                   placeholder="Search staff..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full rounded-lg border border-gray-300 pl-10 pr-4 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  className="w-full rounded-lg border border-gray-300 pl-10 pr-4 py-2 text-sm focus:border-[#3C89A9] focus:outline-none focus:ring-1 focus:ring-[#3C89A9]"
                 />
               </div>
             </div>
@@ -185,7 +185,7 @@ export default function AssignmentsPage() {
                           disabled={!canAssign}
                           className={`rounded-lg px-3 py-1 text-sm font-medium transition-colors ${
                             canAssign
-                              ? 'bg-blue-600 text-white hover:bg-blue-700'
+                              ? 'bg-[#3C89A9] text-white hover:bg-[#2c6b87]'
                               : 'bg-gray-100 text-gray-400 cursor-not-allowed'
                           }`}
                         >
@@ -297,7 +297,7 @@ export default function AssignmentsPage() {
                       return (
                         <td key={project.id} className="px-4 py-3 text-center">
                           {assignment ? (
-                            <span className="inline-flex rounded-full bg-blue-100 px-2 py-1 text-xs font-medium text-blue-700">
+                            <span className="inline-flex rounded-full bg-[#3C89A9]/10 px-2 py-1 text-xs font-medium text-[#3C89A9]">
                               {assignment.allocation}%
                             </span>
                           ) : (

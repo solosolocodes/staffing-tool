@@ -45,8 +45,8 @@ export default function MetricCard({
           )}
         </div>
         <div className="ml-4">
-          <div className="rounded-lg bg-blue-50 p-3">
-            <Icon className="h-6 w-6 text-blue-600" />
+          <div className="rounded-xl bg-gradient-to-br from-[#3C89A9]/10 to-[#4a90b8]/10 p-3 shadow-sm">
+            <Icon className="h-6 w-6 text-[#3C89A9]" />
           </div>
         </div>
       </div>
