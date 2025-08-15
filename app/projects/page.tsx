@@ -24,8 +24,9 @@ export default function ProjectsPage() {
   const [priorityFilter, setPriorityFilter] = useState('all');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [projects, setProjects] = useState<Project[]>(mockProjects);
-  const [editingProject, setEditingProject] = useState<Project | null>(null);
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalMode, setModalMode] = useState<'create' | 'edit' | 'view'>('view');
 
   const filteredProjects = projects.filter(project => {
     const matchesSearch = project.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -36,13 +37,45 @@ export default function ProjectsPage() {
     return matchesSearch && matchesStatus && matchesPriority;
   });
 
-  const handleEditProject = (project: Project) => {
-    setEditingProject(project);
+  const handleCreateProject = () => {
+    setSelectedProject(null);
+    setModalMode('create');
     setIsModalOpen(true);
   };
 
-  const handleSaveProject = (updatedProject: Project) => {
-    setProjects(projects.map(p => p.id === updatedProject.id ? updatedProject : p));
+  const handleViewProject = (project: Project) => {
+    setSelectedProject(project);
+    setModalMode('view');
+    setIsModalOpen(true);
+  };
+
+  const handleEditProject = (project: Project) => {
+    setSelectedProject(project);
+    setModalMode('edit');
+    setIsModalOpen(true);
+  };
+
+  const handleSaveProject = (projectData: Project) => {
+    if (modalMode === 'create') {
+      // Add new project
+      setProjects([...projects, projectData]);
+    } else {
+      // Update existing project
+      setProjects(projects.map(p => p.id === projectData.id ? projectData : p));
+    }
+    setIsModalOpen(false);
+    setSelectedProject(null);
+  };
+
+  const handleDeleteProject = (projectId: string) => {
+    if (window.confirm('Are you sure you want to delete this project? This action cannot be undone.')) {
+      setProjects(projects.filter(p => p.id !== projectId));
+    }
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedProject(null);
   };
 
   const getTeamLead = (project: Project) => {
@@ -58,7 +91,10 @@ export default function ProjectsPage() {
           <h1 className="text-3xl font-bold text-gray-900">Projects</h1>
           <p className="mt-1 text-sm text-gray-500">Manage and track all your projects</p>
         </div>
-        <button className="flex items-center gap-2 rounded-lg bg-[#3C89A9] px-4 py-2 text-sm font-medium text-white hover:bg-[#2c6b87] shadow-sm">
+        <button 
+          onClick={handleCreateProject}
+          className="flex items-center gap-2 rounded-lg bg-[#3C89A9] px-4 py-2 text-sm font-medium text-white hover:bg-[#2c6b87] shadow-sm"
+        >
           <Plus className="h-4 w-4" />
           New Project
         </button>
@@ -213,7 +249,10 @@ export default function ProjectsPage() {
               </div>
 
               <div className="mt-4 pt-4 border-t border-gray-200 flex items-center gap-2">
-                <button className="flex-1 flex items-center justify-center gap-1 rounded-lg border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50">
+                <button 
+                  onClick={() => handleViewProject(project)}
+                  className="flex-1 flex items-center justify-center gap-1 rounded-lg border border-[#3C89A9] px-3 py-1.5 text-sm font-medium text-[#3C89A9] hover:bg-[#3C89A9] hover:text-white transition-colors"
+                >
                   <Eye className="h-4 w-4" />
                   View
                 </button>
@@ -223,6 +262,12 @@ export default function ProjectsPage() {
                 >
                   <Edit className="h-4 w-4" />
                   Edit
+                </button>
+                <button 
+                  onClick={() => handleDeleteProject(project.id)}
+                  className="flex items-center justify-center gap-1 rounded-lg border border-red-300 px-3 py-1.5 text-sm font-medium text-red-600 hover:bg-red-50 transition-colors"
+                >
+                  <Trash2 className="h-4 w-4" />
                 </button>
               </div>
             </div>
@@ -310,16 +355,25 @@ export default function ProjectsPage() {
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-2">
-                      <button className="text-gray-400 hover:text-gray-600">
+                      <button 
+                        onClick={() => handleViewProject(project)}
+                        className="text-gray-400 hover:text-[#3C89A9]"
+                        title="View Project"
+                      >
                         <Eye className="h-4 w-4" />
                       </button>
                       <button 
                         onClick={() => handleEditProject(project)}
                         className="text-gray-400 hover:text-gray-600"
+                        title="Edit Project"
                       >
                         <Edit className="h-4 w-4" />
                       </button>
-                      <button className="text-gray-400 hover:text-red-600">
+                      <button 
+                        onClick={() => handleDeleteProject(project.id)}
+                        className="text-gray-400 hover:text-red-600"
+                        title="Delete Project"
+                      >
                         <Trash2 className="h-4 w-4" />
                       </button>
                     </div>
@@ -332,13 +386,12 @@ export default function ProjectsPage() {
       )}
 
       <ProjectEditModal
-        project={editingProject}
+        project={selectedProject}
         isOpen={isModalOpen}
-        onClose={() => {
-          setIsModalOpen(false);
-          setEditingProject(null);
-        }}
+        onClose={closeModal}
         onSave={handleSaveProject}
+        onDelete={handleDeleteProject}
+        mode={modalMode}
       />
     </div>
   );
